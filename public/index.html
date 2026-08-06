@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>班級活動時段登記平台 | Class Booking System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="glass-header">
+    <div class="header-container">
+      <div class="logo" id="logo-lobby-btn" style="cursor: pointer;">
+        <i class="fa-solid fa-calendar-check logo-icon"></i>
+        <div>
+          <h1>時段預約協作系統</h1>
+          <span class="sub-logo">Class Slot Booking (Firebase 版)</span>
+        </div>
+      </div>
+      
+      <div class="header-controls">
+        <!-- Firebase Status Indicator -->
+        <div id="firebase-status" class="status-indicator inactive">
+          <i class="fa-solid fa-database"></i> <span id="status-text">本機儲存模式</span>
+        </div>
+        
+        <button id="btn-admin-toggle" class="btn btn-secondary">
+          <i class="fa-solid fa-user-gear"></i> 管理登入
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- 1. Lobby View (Shown when entering the app) -->
+    <div id="lobby-view" class="view-panel active">
+      <div class="lobby-header">
+        <h2><i class="fa-solid fa-cubes"></i> 活動預約大廳</h2>
+        <p>請選擇您要填報的學年活動登記表：</p>
+      </div>
+      
+      <div id="activities-lobby-grid" class="lobby-grid">
+        <!-- Dynamically rendered activity cards -->
+      </div>
+    </div>
+
+    <!-- 2. Activity Detail View (Shown when an activity is selected) -->
+    <div id="activity-view" class="view-panel">
+      <!-- Breadcrumb / Back button -->
+      <div class="breadcrumb">
+        <button id="btn-back-lobby" class="btn btn-secondary-outline btn-sm">
+          <i class="fa-solid fa-arrow-left-long"></i> 返回大廳
+        </button>
+        <span class="breadcrumb-separator">/</span>
+        <span id="breadcrumb-current">載入中...</span>
+      </div>
+
+      <!-- Hero / Description Card -->
+      <section class="glass-card hero-card" id="activity-info">
+        <div class="hero-details">
+          <div class="badge-active">活動填報中</div>
+          <h2 id="activity-title">-- 載入中 --</h2>
+          <h3 id="activity-subtitle">-- 載入中 --</h3>
+          <p id="activity-description">請稍候，正在讀取活動資訊...</p>
+        </div>
+      </section>
+
+      <!-- Class Progress Checklist Section -->
+      <section class="glass-card progress-card">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-list-check"></i> 各班登記進度</h3>
+          <span id="progress-text" class="progress-percent">0 / 0 班已登記 (0%)</span>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+          <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <!-- Classes Grid -->
+        <div class="classes-grid-container">
+          <div class="classes-title">班級清單：</div>
+          <div id="classes-list" class="classes-grid">
+            <!-- Dynamically populated class badges -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Calendar View Weeks Container -->
+      <section class="calendar-section">
+        <div class="calendar-header">
+          <div class="calendar-header-left">
+            <h2><i class="fa-solid fa-calendar-days"></i> 登記課表時段</h2>
+            <div class="legend">
+              <span class="legend-item"><span class="legend-dot dot-available"></span>可填報</span>
+              <span class="legend-item"><span class="legend-dot dot-partial"></span>尚有餘額</span>
+              <span class="legend-item"><span class="legend-dot dot-reserved"></span>已額滿</span>
+              <span class="legend-item"><span class="legend-dot dot-blocked"></span>停用/不開放</span>
+            </div>
+          </div>
+          
+          <div class="calendar-header-actions">
+            <button id="btn-export-png" class="btn btn-primary btn-accent">
+              <i class="fa-solid fa-image"></i> 匯出成果圖檔
+            </button>
+          </div>
+        </div>
+
+        <!-- Capture Area for html2canvas -->
+        <div id="calendar-capture-area">
+          <div id="weeks-container" class="weeks-grid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Admin Panel Overlay (Floating Sidebar or Full Modal) -->
+  <div id="admin-panel" class="modal-overlay">
+    <div class="modal-content admin-modal glass-card">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-gears"></i> 管理員設定控制台</h2>
+        <button class="btn-close" id="btn-admin-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="admin-sections">
+          <!-- Firebase setup notice -->
+          <div class="admin-card firebase-config-notice">
+            <h4><i class="fa-solid fa-database"></i> Firebase 資料庫狀態</h4>
+            <div id="firebase-config-status-text">
+              本機儲存模式。若要多人即時連線同步，請使用文字編輯器打開專案中的 <code class="code-path">public/config.js</code> 並設定您的 Firebase 金鑰。
+            </div>
+          </div>
+
+          <!-- Section 2: Create new activity manually -->
+          <div class="admin-card">
+            <h4><i class="fa-solid fa-folder-plus"></i> 新增填報活動</h4>
+            <div class="admin-action-buttons">
+              <button id="btn-create-manual" class="btn btn-secondary-outline">
+                <i class="fa-solid fa-pen-to-square"></i> 手動建立填報活動
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 3: Manage current activity -->
+          <div class="admin-card" id="current-act-management" style="display:none;">
+            <h4><i class="fa-solid fa-pen-ruler"></i> 管理當前活動</h4>
+            <p>當前活動：<strong id="admin-curr-act-name">無</strong></p>
+            <div class="admin-action-buttons">
+              <button id="btn-edit-current" class="btn btn-secondary">
+                <i class="fa-solid fa-gear"></i> 編輯活動設定
+              </button>
+              <button id="btn-delete-current" class="btn btn-danger">
+                <i class="fa-solid fa-trash-can"></i> 刪除此活動
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div id="booking-modal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-plus"></i> 登記時段確認</h3>
+        <button class="btn-close" id="btn-booking-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="booking-time-info">您選擇的時間為：<br><strong id="booking-time-string">-- 日期與時間 --</strong></p>
+        
+        <form id="booking-form">
+          <div class="form-group">
+            <label for="booking-class-select">選擇您的班級：</label>
+            <select id="booking-class-select" class="glass-select" required>
+              <option value="" disabled selected>-- 請選擇班級 --</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="booking-pin">設定 4 位數修改密碼（防篡改）：</label>
+            <input type="password" id="booking-pin" class="glass-input" pattern="[0-9]{4}" placeholder="例如：1234" required>
+            <p class="help-text">日後若要更換或釋放時段，需輸入此密碼驗證。</p>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary-outline" id="btn-booking-cancel">取消</button>
+            <button type="submit" class="btn btn-primary" id="btn-booking-submit">確認登記</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Release Modal -->
+  <div id="release-modal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-circle-minus"></i> 釋放已登記時段</h3>
+        <button class="btn-close" id="btn-release-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="booking-time-info">釋放時段將刪除登記：<br><strong id="release-time-string">-- 日期與時間 --</strong></p>
+        
+        <div class="form-group">
+          <label for="release-class-select">請選擇您要取消登記的班級：</label>
+          <select id="release-class-select" class="glass-select" required>
+            <!-- Dynamically loaded with classes registered in this slot -->
+          </select>
+        </div>
+        
+        <div id="release-passcode-area">
+          <div class="form-group">
+            <label for="release-pin">請輸入登記時設定的 4 位數修改密碼：</label>
+            <input type="password" id="release-pin" class="glass-input" pattern="[0-9]{4}" placeholder="輸入 4 位密碼">
+          </div>
+        </div>
+
+        <p class="admin-notice" id="release-admin-notice" style="display:none;">
+          <i class="fa-solid fa-shield-halved"></i> 偵測到管理員登入，您可以免密碼強制釋放此時段。
+        </p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary-outline" id="btn-release-cancel">取消</button>
+          <button type="button" class="btn btn-danger" id="btn-release-submit">確認釋放時段</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Create/Edit Activity Modal -->
+  <div id="manual-modal" class="modal-overlay">
+    <div class="modal-content manual-modal glass-card">
+      <div class="modal-header">
+        <h3 id="manual-modal-title"><i class="fa-solid fa-file-invoice"></i> 新增填報活動</h3>
+        <button class="btn-close" id="btn-manual-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="manual-activity-form">
+          <input type="hidden" id="edit-activity-id">
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="act-title">活動主標題：</label>
+              <input type="text" id="act-title" class="glass-input" placeholder="例如：114上學期入班輔導時段調查" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="act-subtitle">活動副標題與主題：</label>
+              <input type="text" id="act-subtitle" class="glass-input" placeholder="例如：五年級主題：多元性別氣質" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="act-desc">說明內容：</label>
+            <textarea id="act-desc" class="glass-textarea" rows="2" placeholder="輸入說明文字，指導老師們如何填寫。"></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="act-start-date">開始日期：</label>
+              <input type="date" id="act-start-date" class="glass-input" required>
+            </div>
+            <div class="form-group">
+              <label for="act-end-date">結束日期：</label>
+              <input type="date" id="act-end-date" class="glass-input" required>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="act-classes">參與班級（逗號隔開）：</label>
+              <input type="text" id="act-classes" class="glass-input" placeholder="例如：501, 502, 503..." required>
+            </div>
+            
+            <div class="form-group">
+              <label for="act-capacity">單一時段可容納班級上限 (Capacity)：</label>
+              <input type="number" id="act-capacity" class="glass-input" min="1" max="10" value="1" required>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary-outline" id="btn-manual-cancel">取消</button>
+            <button type="submit" class="btn btn-primary">儲存並建立登記表</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Verification Modal (Password login) -->
+  <div id="verify-modal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-lock"></i> 管理員身份驗證</h3>
+        <button class="btn-close" id="btn-verify-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="verify-form">
+          <div class="form-group">
+            <label for="admin-pwd">請輸入管理密碼：</label>
+            <input type="password" id="admin-pwd" class="glass-input" placeholder="預設密碼為 admin" required>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary-outline" id="btn-verify-cancel">取消</button>
+            <button type="submit" class="btn btn-primary">登入後台</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Cell Block Toggle Modal -->
+  <div id="cell-admin-modal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-ban"></i> 時段狀態變更 (Admin)</h3>
+        <button class="btn-close" id="btn-cell-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>所選時段：<strong id="cell-admin-time">-- 時段 --</strong></p>
+        <form id="cell-admin-form">
+          <div class="form-group">
+            <label>時段狀態：</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="cell-status" value="available" checked> 開放選填
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="cell-status" value="blocked"> 屏蔽停用
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group" id="cell-note-group">
+            <label for="cell-note">停用原因 / 備註：</label>
+            <input type="text" id="cell-note" class="glass-input" placeholder="例如：專輔校外研習、段考避開">
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary-outline" id="btn-cell-cancel">取消</button>
+            <button type="submit" class="btn btn-primary">確定變更</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simple Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 學校行政便利通 | 班級登記多人即時協作系統 | 支援 Firebase 專屬雲端同步與圖檔導出</p>
+  </footer>
+
+  <!-- Loaded SDK scripts locally according to Skill Guidelines (CORS-free on line app WebViews) -->
+  <script src="lib/html2canvas.min.js"></script>
+  <script src="lib/firebase-app-compat.js"></script>
+  <script src="lib/firebase-database-compat.js"></script>
+  
+  <!-- Config File and App Main Script -->
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1237 @@
+// Default Preloaded Activity Data (五年級入班輔導)
+const DEFAULT_DB = {
+  adminPassword: 'admin',
+  activities: [
+    {
+      id: "114-grade5-counseling",
+      title: "114上學期入班輔導時段調查",
+      subtitle: "五年級主題：多元性別氣質",
+      description: "五年級老師們好：本學期的入班輔導由李允立老師進行，請老師們選擇藍色框中任選一節課填入您的班級；如因故必須修改入班時段，歡迎與授課老師聯繫。😊",
+      classes: [
+        "501", "502", "503", "504", "505", "506", "507", "508", "509", "510", "511", "512", "513", "514", "515", "516"
+      ],
+      dateRange: {
+        start: "2025-11-10",
+        end: "2025-12-05"
+      },
+      capacity: 1, // Max classes per slot
+      sessions: [
+        { id: "1", name: "1", time: "08:45~09:25" },
+        { id: "2", name: "2", time: "09:35~10:15" },
+        { id: "3", name: "3", time: "10:30~11:10" },
+        { id: "4", name: "4", time: "11:20~12:00" },
+        { id: "lunch", name: "午休", time: "12:40~13:10", alwaysBlocked: true },
+        { id: "5", name: "5", time: "13:20~14:00" },
+        { id: "6", name: "6", time: "14:10~14:50" }
+      ],
+      slots: {
+        "2025-11-10_1": { status: "blocked", note: "" },
+        "2025-11-10_2": { status: "blocked", note: "" },
+        "2025-11-10_3": { status: "blocked", note: "聰明上網學生講座" },
+        "2025-11-10_4": { status: "blocked", note: "" },
+        "2025-11-10_5": { status: "blocked", note: "" },
+        "2025-11-10_6": { status: "blocked", note: "" },
+        "2025-11-11_1": { status: "blocked", note: "專輔校外研習" },
+        "2025-11-11_2": { status: "blocked", note: "專輔校外研習" },
+        "2025-11-11_3": { status: "blocked", note: "專輔校外研習" },
+        "2025-11-11_4": { status: "blocked", note: "專輔校外研習" },
+        "2025-11-11_5": { status: "blocked", note: "專輔校外研習" },
+        "2025-11-11_6": { status: "blocked", note: "專輔校外研習" },
+        "2025-11-12_1": { status: "blocked", note: "" },
+        "2025-11-12_3": { status: "reserved", bookings: { "501": { pin: "1234" } } },
+        "2025-11-12_4": { status: "blocked", note: "" },
+        "2025-11-12_5": { status: "blocked", note: "" },
+        "2025-11-12_6": { status: "blocked", note: "" },
+        "2025-11-13_1": { status: "blocked", note: "" },
+        "2025-11-13_2": { status: "reserved", bookings: { "503": { pin: "1234" } } },
+        "2025-11-13_4": { status: "reserved", bookings: { "509": { pin: "1234" } } },
+        "2025-11-13_5": { status: "blocked", note: "" },
+        "2025-11-13_6": { status: "reserved", bookings: { "505": { pin: "1234" } } },
+        "2025-11-14_1": { status: "blocked", note: "" },
+        "2025-11-14_2": { status: "blocked", note: "" },
+        "2025-11-14_3": { status: "blocked", note: "" },
+        "2025-11-14_4": { status: "blocked", note: "" },
+        "2025-11-14_5": { status: "blocked", note: "" },
+        "2025-11-14_6": { status: "blocked", note: "" },
+        "2025-11-17_1": { status: "blocked", note: "" },
+        "2025-11-17_2": { status: "reserved", bookings: { "507": { pin: "1234" } } },
+        "2025-11-17_3": { status: "reserved", bookings: { "504": { pin: "1234" } } },
+        "2025-11-17_4": { status: "blocked", note: "" },
+        "2025-11-17_5": { status: "blocked", note: "" },
+        "2025-11-17_6": { status: "blocked", note: "" },
+        "2025-11-18_1": { status: "blocked", note: "" },
+        "2025-11-18_2": { status: "reserved", bookings: { "512": { pin: "1234" } } },
+        "2025-11-18_3": { status: "reserved", bookings: { "502": { pin: "1234" } } },
+        "2025-11-18_4": { status: "blocked", note: "" },
+        "2025-11-18_5": { status: "blocked", note: "" },
+        "2025-11-18_6": { status: "blocked", note: "" },
+        "2025-11-19_1": { status: "blocked", note: "" },
+        "2025-11-19_2": { status: "reserved", bookings: { "513": { pin: "1234" } } },
+        "2025-11-19_4": { status: "blocked", note: "" },
+        "2025-11-19_5": { status: "blocked", note: "" },
+        "2025-11-19_6": { status: "blocked", note: "" },
+        "2025-11-20_1": { status: "blocked", note: "" },
+        "2025-11-20_4": { status: "blocked", note: "" },
+        "2025-11-20_5": { status: "reserved", bookings: { "510": { pin: "1234" } } },
+        "2025-11-20_6": { status: "reserved", bookings: { "407": { pin: "1234" } } },
+        "2025-11-21_1": { status: "blocked", note: "" },
+        "2025-11-21_2": { status: "reserved", bookings: { "514": { pin: "1234" } } },
+        "2025-11-21_3": { status: "reserved", bookings: { "511": { pin: "1234" } } },
+        "2025-11-21_4": { status: "blocked", note: "" },
+        "2025-11-21_5": { status: "blocked", note: "" },
+        "2025-11-21_6": { status: "blocked", note: "" },
+        "2025-11-24_1": { status: "blocked", note: "" },
+        "2025-11-24_2": { status: "reserved", bookings: { "508": { pin: "1234" } } },
+        "2025-11-24_3": { status: "reserved", bookings: { "506": { pin: "1234" } } },
+        "2025-11-24_4": { status: "blocked", note: "" },
+        "2025-11-24_5": { status: "blocked", note: "" },
+        "2025-11-24_6": { status: "blocked", note: "" },
+        "2025-11-25_1": { status: "blocked", note: "" },
+        "2025-11-25_2": { status: "blocked", note: "" },
+        "2025-11-25_3": { status: "blocked", note: "" },
+        "2025-11-25_4": { status: "blocked", note: "" },
+        "2025-11-25_5": { status: "blocked", note: "" },
+        "2025-11-25_6": { status: "blocked", note: "" },
+        "2025-11-26_1": { status: "blocked", note: "" },
+        "2025-11-26_2": { status: "blocked", note: "" },
+        "2025-11-26_3": { status: "blocked", note: "" },
+        "2025-11-26_4": { status: "blocked", note: "" },
+        "2025-11-26_5": { status: "blocked", note: "" },
+        "2025-11-26_6": { status: "blocked", note: "" },
+        "2025-11-27_1": { status: "blocked", note: "" },
+        "2025-11-27_2": { status: "blocked", note: "" },
+        "2025-11-27_3": { status: "blocked", note: "" },
+        "2025-11-27_4": { status: "blocked", note: "" },
+        "2025-11-28_1": { status: "blocked", note: "" },
+        "2025-11-28_2": { status: "blocked", note: "" },
+        "2025-11-28_3": { status: "blocked", note: "" },
+        "2025-11-28_4": { status: "blocked", note: "" },
+        "2025-11-28_5": { status: "blocked", note: "" },
+        "2025-11-28_6": { status: "blocked", note: "" },
+        "2025-12-01_1": { status: "blocked", note: "" },
+        "2025-12-01_2": { status: "blocked", note: "" },
+        "2025-12-01_3": { status: "reserved", bookings: { "515": { pin: "1234" } } },
+        "2025-12-01_4": { status: "reserved", bookings: { "516": { pin: "1234" } } },
+        "2025-12-01_5": { status: "blocked", note: "" },
+        "2025-12-01_6": { status: "blocked", note: "" },
+        "2025-12-02_1": { status: "blocked", note: "" },
+        "2025-12-02_2": { status: "blocked", note: "" },
+        "2025-12-02_3": { status: "blocked", note: "" },
+        "2025-12-02_4": { status: "blocked", note: "" },
+        "2025-12-02_5": { status: "blocked", note: "" },
+        "2025-12-02_6": { status: "blocked", note: "" },
+        "2025-12-03_1": { status: "blocked", note: "" },
+        "2025-12-03_2": { status: "blocked", note: "" },
+        "2025-12-03_3": { status: "blocked", note: "" },
+        "2025-12-03_4": { status: "blocked", note: "" },
+        "2025-12-03_5": { status: "blocked", note: "" },
+        "2025-12-03_6": { status: "blocked", note: "" },
+        "2025-12-04_1": { status: "blocked", note: "" },
+        "2025-12-04_2": { status: "blocked", note: "" },
+        "2025-12-04_3": { status: "blocked", note: "" },
+        "2025-12-04_4": { status: "blocked", note: "" },
+        "2025-12-05_1": { status: "blocked", note: "" },
+        "2025-12-05_2": { status: "blocked", note: "" },
+        "2025-12-05_3": { status: "blocked", note: "" },
+        "2025-12-05_4": { status: "blocked", note: "" },
+        "2025-12-05_5": { status: "blocked", note: "" },
+        "2025-12-05_6": { status: "blocked", note: "" }
+      }
+    }
+  ]
+};
+
+// State Variables
+let isFirebaseMode = false;
+let firebaseDbRef = null;
+let db = null; // Used in LocalStorage fallback mode
+
+let state = {
+  activities: [],
+  currentActivity: null,
+  isAdmin: false,
+  adminPassword: '',
+  bookedSlotsLocal: JSON.parse(localStorage.getItem('booked_slots_local_v2')) || {} // local registry key maps: { "actId_slotKey": "pin" }
+};
+
+// DOM Elements
+const lobbyView = document.getElementById('lobby-view');
+const activityView = document.getElementById('activity-view');
+const activitiesLobbyGrid = document.getElementById('activities-lobby-grid');
+const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+const firebaseStatus = document.getElementById('firebase-status');
+const firebaseStatusText = document.getElementById('status-text');
+
+const activityTitle = document.getElementById('activity-title');
+const activitySubtitle = document.getElementById('activity-subtitle');
+const activityDescription = document.getElementById('activity-description');
+const progressText = document.getElementById('progress-text');
+const progressFill = document.getElementById('progress-fill');
+const classesList = document.getElementById('classes-list');
+const weeksContainer = document.getElementById('weeks-container');
+const toastContainer = document.getElementById('toast-container');
+
+// Modals
+const adminPanel = document.getElementById('admin-panel');
+const bookingModal = document.getElementById('booking-modal');
+const releaseModal = document.getElementById('release-modal');
+const manualModal = document.getElementById('manual-modal');
+const verifyModal = document.getElementById('verify-modal');
+const cellAdminModal = document.getElementById('cell-admin-modal');
+
+// Page Load Initializer
+window.addEventListener('DOMContentLoaded', async () => {
+  setupEventListeners();
+  initFirebaseOrLocal();
+});
+
+// 1. Initialize DB: Verify Firebase config or fallback to LocalStorage
+function initFirebaseOrLocal() {
+  const config = window.firebaseConfig;
+  const hasValidConfig = config && config.apiKey && config.apiKey !== "YOUR_API_KEY" && config.databaseURL;
+
+  if (hasValidConfig) {
+    try {
+      // Initialize Firebase App globally using local SDK compat libraries loaded in HTML
+      firebase.initializeApp(config);
+      firebaseDbRef = firebase.database().ref();
+      isFirebaseMode = true;
+      
+      // Update UI Indicator
+      firebaseStatus.className = 'status-indicator active';
+      firebaseStatusText.textContent = 'Firebase 連線成功';
+      document.getElementById('firebase-config-status-text').innerHTML = `
+        <i class="fa-solid fa-circle-check" style="color:var(--success-color);"></i> 
+        已成功連線至您的專屬 Firebase 雲端資料庫。資料安全有保障！
+      `;
+      
+      // Start Realtime Listener (Bi-directional sync flow)
+      syncWithFirebase();
+      return;
+    } catch (err) {
+      console.error('Firebase 載入錯誤，改為本機模式:', err);
+    }
+  }
+
+  // Fallback to LocalStorage Mode
+  isFirebaseMode = false;
+  firebaseStatus.className = 'status-indicator inactive';
+  firebaseStatusText.textContent = '本機儲存模式';
+  
+  // Read local DB
+  const localData = localStorage.getItem('class_slot_booking_db_v2');
+  if (localData) {
+    db = JSON.parse(localData);
+  } else {
+    db = JSON.parse(JSON.stringify(DEFAULT_DB));
+    saveLocalDb();
+  }
+  
+  // Directly load Lobby
+  renderLobby();
+}
+
+function saveLocalDb() {
+  if (db && !isFirebaseMode) {
+    localStorage.setItem('class_slot_booking_db_v2', JSON.stringify(db));
+  }
+}
+
+// 2. Firebase Live Listener
+function syncWithFirebase() {
+  // Sync the entire database
+  firebaseDbRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    
+    // Auto-create defaults in Firebase if db is empty
+    if (!data || !data.activities) {
+      firebaseDbRef.set(DEFAULT_DB);
+      return;
+    }
+
+    // Defensive check for array truncation (Principle 2)
+    const syncedActivities = (data.activities || []).map(act => {
+      act.classes = act.classes || [];
+      act.sessions = act.sessions || [];
+      act.slots = act.slots || {};
+      // Ensure bookings array/objects are safe
+      Object.keys(act.slots).forEach(k => {
+        if (act.slots[k].status === 'reserved') {
+          act.slots[k].bookings = act.slots[k].bookings || {};
+        }
+      });
+      return act;
+    });
+
+    state.adminPassword = data.adminPassword || 'admin';
+    state.activities = syncedActivities;
+
+    // Trigger UI updates
+    renderLobby();
+    
+    if (state.currentActivity) {
+      // Find updated state of active activity
+      const updatedAct = syncedActivities.find(a => a.id === state.currentActivity.id);
+      if (updatedAct) {
+        state.currentActivity = updatedAct;
+        renderActivityInfo();
+        renderProgress();
+        renderCalendar();
+      }
+    }
+  });
+}
+
+// 3. Render Lobby Dashboard
+function renderLobby() {
+  let activitiesData = [];
+  if (isFirebaseMode) {
+    activitiesData = state.activities;
+  } else {
+    activitiesData = db.activities;
+  }
+
+  activitiesLobbyGrid.innerHTML = '';
+  
+  if (activitiesData.length === 0) {
+    activitiesLobbyGrid.innerHTML = `
+      <div class="glass-card text-center" style="grid-column: 1/-1; padding: 40px;">
+        <i class="fa-solid fa-folder-open" style="font-size: 40px; color: var(--text-muted); margin-bottom: 12px;"></i>
+        <p>目前大廳無任何填報活動。</p>
+        ${state.isAdmin ? '<p style="margin-top: 10px; font-size: 13px;">請點擊控制台中的「手動建立填報活動」來新增一個吧！</p>' : '<p style="margin-top: 10px; font-size: 13px;">請通知管理員登入並建立登記表。</p>'}
+      </div>
+    `;
+    return;
+  }
+
+  activitiesData.forEach(act => {
+    // Calculate progress for each card
+    const classes = act.classes || [];
+    const slots = act.slots || {};
+    
+    const registeredClasses = {};
+    Object.values(slots).forEach(slot => {
+      if (slot.status === 'reserved' && slot.bookings) {
+        Object.keys(slot.bookings).forEach(c => {
+          registeredClasses[c] = true;
+        });
+      }
+    });
+
+    const bookedCount = Object.keys(registeredClasses).length;
+    const totalCount = classes.length;
+    const percent = totalCount > 0 ? Math.round((bookedCount / totalCount) * 100) : 0;
+
+    const card = document.createElement('div');
+    card.className = 'glass-card lobby-card';
+    card.innerHTML = `
+      <div class="lobby-card-header">
+        <h3>${act.title}</h3>
+        <span class="badge-active" style="margin-bottom: 0;">${percent === 100 ? '已完成' : '填報中'}</span>
+      </div>
+      <p class="lobby-card-subtitle">${act.subtitle}</p>
+      <div class="lobby-card-dates">
+        <i class="fa-regular fa-clock"></i> 填報區間：${formatDateLabelShort(act.dateRange.start)} ~ ${formatDateLabelShort(act.dateRange.end)}
+      </div>
+      
+      <div class="progress-bar-container" style="margin-bottom: 12px; height: 6px;">
+        <div class="progress-fill" style="width: ${percent}%;"></div>
+      </div>
+
+      <div class="lobby-card-footer">
+        <span class="lobby-card-progress">${bookedCount} / ${totalCount} 班已登記 (${percent}%)</span>
+        <button class="btn btn-primary btn-sm">進入登記 <i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      enterActivity(act.id);
+    });
+
+    activitiesLobbyGrid.appendChild(card);
+  });
+}
+
+// 4. Enter Specific Activity Page
+function enterActivity(activityId) {
+  let act;
+  if (isFirebaseMode) {
+    act = state.activities.find(a => a.id === activityId);
+  } else {
+    act = db.activities.find(a => a.id === activityId);
+  }
+
+  if (!act) return;
+
+  state.currentActivity = act;
+  
+  // Show / Hide Panels
+  lobbyView.classList.remove('active');
+  activityView.classList.add('active');
+  
+  breadcrumbCurrent.textContent = act.title;
+  document.getElementById('admin-curr-act-name').textContent = act.title;
+  document.getElementById('current-act-management').style.display = 'block';
+
+  renderActivityInfo();
+  renderProgress();
+  renderCalendar();
+}
+
+function exitToLobby() {
+  state.currentActivity = null;
+  activityView.classList.remove('active');
+  lobbyView.classList.add('active');
+  document.getElementById('current-act-management').style.display = 'none';
+  renderLobby();
+}
+
+// Render Details
+function renderActivityInfo() {
+  const act = state.currentActivity;
+  activityTitle.textContent = act.title;
+  activitySubtitle.textContent = act.subtitle;
+  activityDescription.textContent = act.description || '無填寫說明。';
+}
+
+function renderProgress() {
+  const act = state.currentActivity;
+  const classes = act.classes || [];
+  const slots = act.slots || {};
+  
+  const registeredClasses = {};
+  Object.values(slots).forEach(slot => {
+    if (slot.status === 'reserved' && slot.bookings) {
+      Object.keys(slot.bookings).forEach(cls => {
+        registeredClasses[cls] = true;
+      });
+    }
+  });
+
+  const registeredCount = Object.keys(registeredClasses).length;
+  const totalCount = classes.length;
+  const percent = totalCount > 0 ? Math.round((registeredCount / totalCount) * 100) : 0;
+  
+  progressText.textContent = `${registeredCount} / ${totalCount} 班已登記 (${percent}%)`;
+  progressFill.style.width = `${percent}%`;
+
+  classesList.innerHTML = '';
+  classes.forEach(cls => {
+    const badge = document.createElement('div');
+    badge.className = 'class-badge';
+    badge.textContent = cls;
+    
+    if (registeredClasses[cls]) {
+      badge.classList.add('completed');
+      
+      // Find where booked
+      let foundKey = null;
+      let foundSess = null;
+      Object.entries(slots).forEach(([key, s]) => {
+        if (s.status === 'reserved' && s.bookings && s.bookings[cls]) {
+          foundKey = key;
+        }
+      });
+
+      if (foundKey) {
+        const [date, sessId] = foundKey.split('_');
+        const session = act.sessions.find(s => s.id === sessId);
+        const sessName = session ? `第${session.name}節` : '';
+        badge.title = `已登記：${formatDateLabelShort(date)} ${sessName}`;
+      }
+    } else {
+      badge.title = '尚未登記';
+    }
+    classesList.appendChild(badge);
+  });
+}
+
+// Render Calendar Grid Tables (Clean Light Theme)
+function renderCalendar() {
+  const act = state.currentActivity;
+  weeksContainer.innerHTML = '';
+  
+  const dates = getDatesArray(act.dateRange.start, act.dateRange.end);
+  const weekdays = dates.filter(d => d.getDay() !== 0 && d.getDay() !== 6);
+  
+  if (weekdays.length === 0) {
+    weeksContainer.innerHTML = '<p class="text-center" style="grid-column: 1/-1; padding: 20px;">無效日期區間。</p>';
+    return;
+  }
+  
+  const weeks = [];
+  for (let i = 0; i < weekdays.length; i += 5) {
+    weeks.push(weekdays.slice(i, i + 5));
+  }
+  
+  const capacity = act.capacity || 1; // Load slot capacity configuration
+  
+  weeks.forEach((weekDates, weekIndex) => {
+    const weekDiv = document.createElement('div');
+    weekDiv.className = 'week-container';
+    
+    const wTitle = document.createElement('div');
+    wTitle.className = 'week-title';
+    wTitle.innerHTML = `<i class="fa-solid fa-calendar-week" style="color:var(--primary-color);"></i> 第 ${weekIndex + 1} 週 (${formatDateLabelShort(weekDates[0])} ~ ${formatDateLabelShort(weekDates[weekDates.length - 1])})`;
+    weekDiv.appendChild(wTitle);
+    
+    const table = document.createElement('table');
+    table.className = 'week-table';
+    
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = '<th>節次 / 時間</th>';
+    
+    weekDates.forEach(date => {
+      const th = document.createElement('th');
+      th.innerHTML = `${formatDateLabelHeader(date)}`;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    const tbody = document.createElement('tbody');
+    act.sessions.forEach(sess => {
+      const row = document.createElement('tr');
+      if (sess.id === 'lunch') {
+        row.className = 'session-lunch-row';
+      }
+      
+      const sessTh = document.createElement('td');
+      sessTh.className = 'session-th';
+      sessTh.innerHTML = `
+        <span class="session-number">${sess.name}</span>
+        <span class="session-time">${sess.time}</span>
+      `;
+      row.appendChild(sessTh);
+      
+      weekDates.forEach(date => {
+        const dateStr = formatDateIso(date);
+        const slotKey = `${dateStr}_${sess.id}`;
+        const slot = act.slots[slotKey];
+        
+        const td = document.createElement('td');
+        td.className = 'cell-slot';
+        td.dataset.date = dateStr;
+        td.dataset.sessId = sess.id;
+        
+        if (sess.alwaysBlocked) {
+          // Lunch
+          td.className += ' blocked';
+          td.innerHTML = '<div class="blocked-content"><span class="blocked-text">午休</span></div>';
+        } else if (slot && slot.status === 'blocked') {
+          // Admin blocked
+          td.className += ' blocked';
+          td.innerHTML = `<div class="blocked-content"><span class="blocked-text">${slot.note || '不開放'}</span></div>`;
+        } else {
+          // Calculate bookings size
+          const bookings = (slot && slot.bookings) ? slot.bookings : {};
+          const bookedClasses = Object.keys(bookings);
+          const currentCount = bookedClasses.length;
+          
+          if (currentCount === 0) {
+            // 1. Available (Blue)
+            td.className += ' available';
+            td.innerHTML = `
+              <div class="available-content">
+                <i class="fa-solid fa-plus" style="font-size: 12px; margin-bottom: 2px;"></i>
+                <span>可填報</span>
+                ${capacity > 1 ? `<span class="available-cap">可容納 ${capacity} 班</span>` : ''}
+              </div>
+            `;
+            td.addEventListener('click', () => openBookingModal(dateStr, sess.id));
+          } else if (currentCount < capacity) {
+            // 2. Partial (Yellow)
+            td.className += ' partial';
+            const classesLabel = bookedClasses.join(', ');
+            
+            // Check if device booked this slot
+            const ownBookedClasses = bookedClasses.filter(c => !!state.bookedSlotsLocal[`${act.id}_${slotKey}_${c}`]);
+            const editIcon = (ownBookedClasses.length > 0 || state.isAdmin) ? '<i class="fa-solid fa-lock-open" style="font-size:8px;"></i>' : '';
+            
+            td.innerHTML = `
+              <div class="partial-content">
+                <span class="partial-classes">${classesLabel} ${editIcon}</span>
+                <span class="partial-info">(剩 ${capacity - currentCount} 名額)</span>
+              </div>
+            `;
+            td.addEventListener('click', () => {
+              if (state.isAdmin || ownBookedClasses.length > 0) {
+                openReleaseModal(dateStr, sess.id, bookedClasses);
+              } else {
+                // If there's capacity, let other classes click to book
+                openBookingModal(dateStr, sess.id);
+              }
+            });
+          } else {
+            // 3. Fully Reserved (Green)
+            td.className += ' reserved';
+            const classesLabel = bookedClasses.join(', ');
+            
+            const ownBookedClasses = bookedClasses.filter(c => !!state.bookedSlotsLocal[`${act.id}_${slotKey}_${c}`]);
+            const editIcon = (ownBookedClasses.length > 0 || state.isAdmin) ? '<i class="fa-solid fa-lock-open" style="font-size:8px;"></i>' : '';
+            
+            td.innerHTML = `
+              <div class="reserved-content">
+                <span class="reserved-class">${classesLabel} ${editIcon}</span>
+                <span class="reserved-info">已額滿</span>
+              </div>
+            `;
+            td.addEventListener('click', () => openReleaseModal(dateStr, sess.id, bookedClasses));
+          }
+        }
+
+        // Admin double click / click configuration
+        td.addEventListener('dblclick', (e) => {
+          if (state.isAdmin && !sess.alwaysBlocked) {
+            e.preventDefault();
+            openCellAdminModal(dateStr, sess.id);
+          }
+        });
+        td.addEventListener('click', (e) => {
+          if (state.isAdmin && !sess.alwaysBlocked) {
+            if (slot && slot.status === 'reserved') return;
+            openCellAdminModal(dateStr, sess.id);
+          }
+        });
+
+        row.appendChild(td);
+      });
+      tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+    weekDiv.appendChild(table);
+    weeksContainer.appendChild(weekDiv);
+  });
+}
+
+// Helpers
+function getDatesArray(startDateStr, endDateStr) {
+  const dates = [];
+  const start = new Date(startDateStr);
+  const end = new Date(endDateStr);
+  const curr = new Date(start);
+  let limit = 0;
+  while (curr <= end && limit < 100) {
+    dates.push(new Date(curr));
+    curr.setDate(curr.getDate() + 1);
+    limit++;
+  }
+  return dates;
+}
+function formatDateIso(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+function formatDateLabelHeader(date) {
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  const dayIndex = date.getDay();
+  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+  return `${m}/${d} (${weekDays[dayIndex]})`;
+}
+function formatDateLabelShort(dateOrStr) {
+  const date = typeof dateOrStr === 'string' ? new Date(dateOrStr) : dateOrStr;
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  return `${m}/${d}`;
+}
+
+// 5. Booking Modal Setup
+function openBookingModal(date, sessionId) {
+  if (state.isAdmin) {
+    showToast('目前為管理員模式，測試預約請先關閉管理登入。', 'info');
+    return;
+  }
+
+  const act = state.currentActivity;
+  const session = act.sessions.find(s => s.id === sessionId);
+  const sessName = session ? `第 ${session.name} 節 (${session.time})` : '';
+  const dateStr = formatDateLabelHeader(new Date(date));
+  
+  document.getElementById('booking-time-string').innerHTML = `${dateStr} <br> ${sessName}`;
+  
+  // Find which classes are already booked in this activity
+  const bookedClasses = {};
+  Object.values(act.slots).forEach(slot => {
+    if (slot.status === 'reserved' && slot.bookings) {
+      Object.keys(slot.bookings).forEach(c => {
+        bookedClasses[c] = true;
+      });
+    }
+  });
+
+  const classSelect = document.getElementById('booking-class-select');
+  classSelect.innerHTML = '<option value="" disabled selected>-- 請選擇班級 --</option>';
+  
+  act.classes.forEach(cls => {
+    if (!bookedClasses[cls]) {
+      const opt = document.createElement('option');
+      opt.value = cls;
+      opt.textContent = `${cls} 班`;
+      classSelect.appendChild(opt);
+    }
+  });
+
+  document.getElementById('booking-pin').value = '';
+  
+  const form = document.getElementById('booking-form');
+  form.dataset.date = date;
+  form.dataset.sessionId = sessionId;
+  
+  openModal(bookingModal);
+}
+
+// 6. Release Modal Setup
+function openReleaseModal(date, sessionId, bookedClasses) {
+  const act = state.currentActivity;
+  const session = act.sessions.find(s => s.id === sessionId);
+  const sessName = session ? `第 ${session.name} 節 (${session.time})` : '';
+  const dateStr = formatDateLabelHeader(new Date(date));
+  const slotKey = `${date}_${sessionId}`;
+  
+  document.getElementById('release-time-string').innerHTML = `${dateStr} <br> ${sessName}`;
+  
+  // Dropdown select of classes that are registered in this slot
+  const classSelect = document.getElementById('release-class-select');
+  classSelect.innerHTML = '';
+  
+  bookedClasses.forEach(cls => {
+    const opt = document.createElement('option');
+    opt.value = cls;
+    opt.textContent = `${cls} 班`;
+    classSelect.appendChild(opt);
+  });
+
+  const pinInput = document.getElementById('release-pin');
+  pinInput.value = '';
+
+  const passcodeArea = document.getElementById('release-passcode-area');
+  const adminNotice = document.getElementById('release-admin-notice');
+  
+  if (state.isAdmin) {
+    passcodeArea.style.display = 'none';
+    adminNotice.style.display = 'block';
+  } else {
+    passcodeArea.style.display = 'block';
+    adminNotice.style.display = 'none';
+    
+    // Listen to selection change to auto-fill PIN if saved locally on device
+    classSelect.addEventListener('change', () => {
+      const selectedClass = classSelect.value;
+      const ownKey = `${act.id}_${slotKey}_${selectedClass}`;
+      pinInput.value = state.bookedSlotsLocal[ownKey] || '';
+    });
+    
+    // Trigger initial load auto-fill
+    const initialClass = bookedClasses[0];
+    const ownKey = `${act.id}_${slotKey}_${initialClass}`;
+    pinInput.value = state.bookedSlotsLocal[ownKey] || '';
+  }
+
+  const submitBtn = document.getElementById('btn-release-submit');
+  submitBtn.dataset.date = date;
+  submitBtn.dataset.sessionId = sessionId;
+  
+  openModal(releaseModal);
+}
+
+// 7. Admin Cell Toggle Status
+function openCellAdminModal(date, sessionId) {
+  const act = state.currentActivity;
+  const session = act.sessions.find(s => s.id === sessionId);
+  const sessName = session ? `第 ${session.name} 節 (${session.time})` : '';
+  const dateStr = formatDateLabelHeader(new Date(date));
+  const slotKey = `${date}_${sessionId}`;
+  
+  document.getElementById('cell-admin-time').textContent = `${dateStr} ${sessName}`;
+  
+  const form = document.getElementById('cell-admin-form');
+  form.dataset.date = date;
+  form.dataset.sessionId = sessionId;
+  
+  const slot = act.slots[slotKey];
+  const radios = form.elements['cell-status'];
+  const noteInput = document.getElementById('cell-note');
+  
+  if (slot && slot.status === 'blocked') {
+    radios.value = 'blocked';
+    noteInput.value = slot.note || '';
+    document.getElementById('cell-note-group').style.display = 'block';
+  } else {
+    radios.value = 'available';
+    noteInput.value = '';
+    document.getElementById('cell-note-group').style.display = 'none';
+  }
+  
+  openModal(cellAdminModal);
+}
+
+// 8. PNG Image Export via html2canvas
+function exportToPng() {
+  const act = state.currentActivity;
+  if (!act) return;
+
+  showToast('正在生成課表圖檔，請稍候...', 'info');
+
+  const captureArea = document.getElementById('calendar-capture-area');
+  
+  // Style configurations for clean PNG generation
+  html2canvas(captureArea, {
+    scale: 2.5, // High resolution output
+    useCORS: true,
+    backgroundColor: '#f8fafc',
+    logging: false
+  }).then(canvas => {
+    const imgUrl = canvas.toDataURL("image/png");
+    
+    // Create download trigger anchor link
+    const link = document.createElement('a');
+    link.download = `${act.title}_時段登記最終結果.png`;
+    link.href = imgUrl;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('成果圖檔下載成功！', 'success');
+  }).catch(err => {
+    showToast('圖片生成失敗: ' + err.message, 'error');
+  });
+}
+
+// Bind event listeners
+function setupEventListeners() {
+  // Return to Lobby buttons
+  document.getElementById('btn-back-lobby').addEventListener('click', exitToLobby);
+  document.getElementById('logo-lobby-btn').addEventListener('click', exitToLobby);
+
+  // Export to PNG trigger
+  document.getElementById('btn-export-png').addEventListener('click', exportToPng);
+
+  // Close modals
+  document.querySelectorAll('.btn-close, .btn-secondary-outline').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const modal = e.target.closest('.modal-overlay');
+      if (modal) closeModal(modal);
+    });
+  });
+
+  // Admin Log In toggle
+  const adminToggle = document.getElementById('btn-admin-toggle');
+  adminToggle.addEventListener('click', () => {
+    if (state.isAdmin) {
+      state.isAdmin = false;
+      state.adminPassword = '';
+      document.body.classList.remove('admin-mode');
+      adminToggle.innerHTML = '<i class="fa-solid fa-user-gear"></i> 管理登入';
+      adminToggle.className = 'btn btn-secondary';
+      showToast('已安全登出管理控制台', 'info');
+      renderCalendar();
+    } else {
+      openModal(verifyModal);
+    }
+  });
+
+  // Close Admin controls sidebar
+  document.getElementById('btn-admin-close').addEventListener('click', () => {
+    closeModal(adminPanel);
+  });
+
+  // Verify Admin password
+  document.getElementById('verify-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const pwd = document.getElementById('admin-pwd').value;
+    
+    const correctPwd = isFirebaseMode ? state.adminPassword : db.adminPassword;
+    
+    if (pwd === correctPwd) {
+      state.isAdmin = true;
+      state.adminPassword = pwd;
+      document.body.classList.add('admin-mode');
+      
+      closeModal(verifyModal);
+      adminToggle.innerHTML = '<i class="fa-solid fa-user-shield"></i> 管理控制台';
+      adminToggle.className = 'btn btn-accent';
+      showToast('管理員登入成功', 'success');
+      
+      openModal(adminPanel);
+      renderCalendar();
+    } else {
+      showToast('管理密碼驗證錯誤！(預設密碼為 admin)', 'error');
+    }
+  });
+
+  // Book slot form submit
+  document.getElementById('booking-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const date = form.dataset.date;
+    const sessionId = form.dataset.sessionId;
+    const className = document.getElementById('booking-class-select').value;
+    const pin = document.getElementById('booking-pin').value;
+    const slotKey = `${date}_${sessionId}`;
+    
+    const actId = state.currentActivity.id;
+
+    if (isFirebaseMode) {
+      // 1. Firebase Write Flow
+      const slotRef = firebaseDbRef.child(`activities`).child(
+        state.activities.findIndex(a => a.id === actId)
+      ).child('slots').child(slotKey);
+
+      try {
+        const snapshot = await slotRef.once('value');
+        let slotData = snapshot.val();
+
+        if (!slotData) {
+          slotData = { status: 'reserved', bookings: {} };
+        } else if (slotData.status === 'blocked') {
+          showToast('此時段已被屏蔽，不可預約！', 'error');
+          return;
+        } else {
+          slotData.status = 'reserved';
+          slotData.bookings = slotData.bookings || {};
+        }
+
+        // Add class booking
+        slotData.bookings[className] = { pin: pin };
+        await slotRef.set(slotData);
+
+        // Save local key for device lock
+        const ownKey = `${actId}_${slotKey}_${className}`;
+        state.bookedSlotsLocal[ownKey] = pin;
+        localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
+
+        closeModal(bookingModal);
+        showToast(`${className} 班登記成功！`, 'success');
+      } catch (err) {
+        showToast('Firebase 寫入失敗: ' + err.message, 'error');
+      }
+    } else {
+      // 2. LocalStorage Write Flow
+      const act = db.activities.find(a => a.id === actId);
+      let slotData = act.slots[slotKey];
+      
+      if (!slotData) {
+        slotData = { status: 'reserved', bookings: {} };
+      } else {
+        slotData.status = 'reserved';
+        slotData.bookings = slotData.bookings || {};
+      }
+
+      slotData.bookings[className] = { pin: pin };
+      act.slots[slotKey] = slotData;
+      saveLocalDb();
+
+      // Save local device lock keys
+      const ownKey = `${actId}_${slotKey}_${className}`;
+      state.bookedSlotsLocal[ownKey] = pin;
+      localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
+
+      closeModal(bookingModal);
+      showToast(`${className} 班登記成功！`, 'success');
+      loadActivity(actId);
+    }
+  });
+
+  // Release booking click
+  document.getElementById('btn-release-submit').addEventListener('click', async (e) => {
+    const btn = e.target;
+    const date = btn.dataset.date;
+    const sessionId = btn.dataset.sessionId;
+    const className = document.getElementById('release-class-select').value;
+    const pin = document.getElementById('release-pin').value;
+    
+    const slotKey = `${date}_${sessionId}`;
+    const actId = state.currentActivity.id;
+
+    if (isFirebaseMode) {
+      // 1. Firebase Release Flow
+      const actIndex = state.activities.findIndex(a => a.id === actId);
+      const slotRef = firebaseDbRef.child(`activities`).child(actIndex).child('slots').child(slotKey);
+
+      try {
+        const snapshot = await slotRef.once('value');
+        const slotData = snapshot.val();
+        
+        if (!slotData || !slotData.bookings || !slotData.bookings[className]) {
+          showToast('查無該班級登記紀錄', 'error');
+          return;
+        }
+
+        const correctPin = slotData.bookings[className].pin;
+        const isCorrectAdmin = state.isAdmin;
+
+        if (correctPin !== pin && !isCorrectAdmin) {
+          showToast('取消密碼驗證錯誤，無法取消他人登記！', 'error');
+          return;
+        }
+
+        // Delete specific booking class
+        delete slotData.bookings[className];
+
+        // If no bookings remain, clean ref key or set status available
+        if (Object.keys(slotData.bookings).length === 0) {
+          await slotRef.remove();
+        } else {
+          await slotRef.set(slotData);
+        }
+
+        // Clean local keys
+        const ownKey = `${actId}_${slotKey}_${className}`;
+        delete state.bookedSlotsLocal[ownKey];
+        localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
+
+        closeModal(releaseModal);
+        showToast(`已釋放 ${className} 班時段`, 'success');
+      } catch (err) {
+        showToast('Firebase 釋放失敗', 'error');
+      }
+    } else {
+      // 2. LocalStorage Release Flow
+      const act = db.activities.find(a => a.id === actId);
+      const slotData = act.slots[slotKey];
+      
+      const correctPin = slotData.bookings[className].pin;
+      const isCorrectAdmin = state.isAdmin;
+
+      if (correctPin !== pin && !isCorrectAdmin) {
+        showToast('取消密碼驗證錯誤！', 'error');
+        return;
+      }
+
+      delete slotData.bookings[className];
+      if (Object.keys(slotData.bookings).length === 0) {
+        delete act.slots[slotKey];
+      }
+      saveLocalDb();
+
+      // Clean local keys
+      const ownKey = `${actId}_${slotKey}_${className}`;
+      delete state.bookedSlotsLocal[ownKey];
+      localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
+
+      closeModal(releaseModal);
+      showToast(`已釋放 ${className} 班時段`, 'success');
+      loadActivity(actId);
+    }
+  });
+
+  // Cell Admin Block
+  const cellAdminForm = document.getElementById('cell-admin-form');
+  cellAdminForm.elements['cell-status'].forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      const noteGroup = document.getElementById('cell-note-group');
+      noteGroup.style.display = e.target.value === 'blocked' ? 'block' : 'none';
+    });
+  });
+
+  cellAdminForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const date = form.dataset.date;
+    const sessionId = form.dataset.sessionId;
+    const status = form.elements['cell-status'].value;
+    const note = document.getElementById('cell-note').value;
+    const slotKey = `${date}_${sessionId}`;
+    
+    const actId = state.currentActivity.id;
+
+    if (isFirebaseMode) {
+      const actIndex = state.activities.findIndex(a => a.id === actId);
+      const slotRef = firebaseDbRef.child(`activities`).child(actIndex).child('slots').child(slotKey);
+
+      try {
+        if (status === 'blocked') {
+          await slotRef.set({ status: 'blocked', note: note || '' });
+        } else {
+          await slotRef.remove();
+        }
+        closeModal(cellAdminModal);
+        showToast('時段狀態已儲存至 Firebase', 'success');
+      } catch (err) {
+        showToast('儲存失敗', 'error');
+      }
+    } else {
+      // LocalStorage Mode
+      const act = db.activities.find(a => a.id === actId);
+      if (status === 'blocked') {
+        act.slots[slotKey] = { status: 'blocked', note: note || '' };
+      } else {
+        delete act.slots[slotKey];
+      }
+      saveLocalDb();
+      closeModal(cellAdminModal);
+      showToast('時段狀態已儲存', 'success');
+      loadActivity(actId);
+    }
+  });
+
+  // Delete Current Activity
+  document.getElementById('btn-delete-current').addEventListener('click', async () => {
+    if (!state.currentActivity) return;
+    if (!confirm(`確定要刪除整個活動「${state.currentActivity.title}」嗎？所有班級登記將被抹除！`)) return;
+    
+    const actId = state.currentActivity.id;
+
+    if (isFirebaseMode) {
+      const actIndex = state.activities.findIndex(a => a.id === actId);
+      try {
+        // Remove from list
+        const updatedList = [...state.activities];
+        updatedList.splice(actIndex, 1);
+        await firebaseDbRef.child('activities').set(updatedList);
+        
+        exitToLobby();
+        showToast('活動已成功從 Firebase 移除', 'success');
+      } catch (err) {
+        showToast('刪除失敗', 'error');
+      }
+    } else {
+      // LocalStorage Mode
+      const idx = db.activities.findIndex(a => a.id === actId);
+      if (idx !== -1) {
+        db.activities.splice(idx, 1);
+        saveLocalDb();
+        exitToLobby();
+        showToast('活動已自本機移除', 'success');
+      }
+    }
+  });
+
+  // Edit / Create manual forms setup
+  document.getElementById('btn-edit-current').addEventListener('click', () => {
+    const act = state.currentActivity;
+    if (!act) return;
+    
+    document.getElementById('manual-modal-title').innerHTML = '<i class="fa-solid fa-gear"></i> 編輯活動設定';
+    document.getElementById('edit-activity-id').value = act.id;
+    document.getElementById('act-title').value = act.title;
+    document.getElementById('act-subtitle').value = act.subtitle;
+    document.getElementById('act-desc').value = act.description || '';
+    document.getElementById('act-start-date').value = act.dateRange.start;
+    document.getElementById('act-end-date').value = act.dateRange.end;
+    document.getElementById('act-classes').value = (act.classes || []).join(', ');
+    document.getElementById('act-capacity').value = act.capacity || 1;
+    
+    closeModal(adminPanel);
+    openModal(manualModal);
+  });
+
+  document.getElementById('btn-create-manual').addEventListener('click', () => {
+    document.getElementById('manual-modal-title').innerHTML = '<i class="fa-solid fa-file-invoice"></i> 手動建立填報活動';
+    document.getElementById('edit-activity-id').value = '';
+    document.getElementById('act-title').value = '';
+    document.getElementById('act-subtitle').value = '';
+    document.getElementById('act-desc').value = '';
+    
+    const today = new Date();
+    const future = new Date();
+    future.setDate(today.getDate() + 25);
+    
+    document.getElementById('act-start-date').value = formatDateIso(today);
+    document.getElementById('act-end-date').value = formatDateIso(future);
+    document.getElementById('act-classes').value = '501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516';
+    document.getElementById('act-capacity').value = 1;
+    
+    closeModal(adminPanel);
+    openModal(manualModal);
+  });
+
+  // Save manual activity form
+  document.getElementById('manual-activity-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('edit-activity-id').value;
+    const title = document.getElementById('act-title').value;
+    const subtitle = document.getElementById('act-subtitle').value;
+    const description = document.getElementById('act-desc').value;
+    const start = document.getElementById('act-start-date').value;
+    const end = document.getElementById('act-end-date').value;
+    const classesStr = document.getElementById('act-classes').value;
+    const capacity = parseInt(document.getElementById('act-capacity').value) || 1;
+    
+    const classes = classesStr.split(',').map(s => s.trim()).filter(Boolean);
+    const sessions = [
+      { id: "1", name: "1", time: "08:45~09:25" },
+      { id: "2", name: "2", time: "09:35~10:15" },
+      { id: "3", name: "3", time: "10:30~11:10" },
+      { id: "4", name: "4", time: "11:20~12:00" },
+      { id: "lunch", name: "午休", time: "12:40~13:10", alwaysBlocked: true },
+      { id: "5", name: "5", time: "13:20~14:00" },
+      { id: "6", name: "6", time: "14:10~14:50" }
+    ];
+
+    const actData = {
+      id: id || 'act_' + Date.now(),
+      title,
+      subtitle,
+      description,
+      classes,
+      dateRange: { start, end },
+      capacity,
+      sessions,
+      slots: {}
+    };
+
+    if (isFirebaseMode) {
+      try {
+        const listCopy = [...state.activities];
+        const index = listCopy.findIndex(a => a.id === actData.id);
+        
+        if (index >= 0) {
+          actData.slots = listCopy[index].slots || {}; // preserve bookings
+          listCopy[index] = actData;
+        } else {
+          listCopy.push(actData);
+        }
+
+        await firebaseDbRef.child('activities').set(listCopy);
+        closeModal(manualModal);
+        showToast('活動已儲存至 Firebase', 'success');
+        enterActivity(actData.id);
+      } catch (err) {
+        showToast('Firebase 儲存失敗: ' + err.message, 'error');
+      }
+    } else {
+      // LocalStorage Mode
+      const index = db.activities.findIndex(a => a.id === actData.id);
+      if (index >= 0) {
+        actData.slots = db.activities[index].slots || {};
+        db.activities[index] = actData;
+      } else {
+        db.activities.push(actData);
+      }
+      saveLocalDb();
+      closeModal(manualModal);
+      showToast('活動已儲存至本機', 'success');
+      fetchActivities(actData.id);
+    }
+  });
+}
+
+function openModal(modal) {
+  modal.classList.add('active');
+}
+function closeModal(modal) {
+  modal.classList.remove('active');
+}
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  let icon = '<i class="fa-solid fa-circle-check"></i>';
+  if (type === 'error') icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+  if (type === 'info') icon = '<i class="fa-solid fa-circle-info"></i>';
+  
+  toast.innerHTML = `${icon} <span>${message}</span>`;
+  toastContainer.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'slideIn 0.3s reverse forwards';
+    toast.addEventListener('animationend', () => {
+      toast.remove();
+    });
+  }, 4000);
+}
