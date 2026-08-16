@@ -864,6 +864,36 @@ function setupEventListeners() {
     }
   });
 
+  // Change Admin Password Form submit
+  document.getElementById('change-pwd-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newPwd = document.getElementById('new-admin-pwd').value.trim();
+    if (!newPwd) {
+      showToast('密碼不能為空', 'error');
+      return;
+    }
+
+    if (isFirebaseMode) {
+      // 1. Firebase update
+      firebaseDbRef.child('adminPassword').set(newPwd)
+        .then(() => {
+          state.adminPassword = newPwd;
+          showToast('管理員密碼已更新並上傳雲端', 'success');
+          document.getElementById('new-admin-pwd').value = '';
+        })
+        .catch(err => {
+          showToast('更新密碼失敗: ' + err.message, 'error');
+        });
+    } else {
+      // 2. LocalStorage update
+      db.adminPassword = newPwd;
+      saveLocalDb();
+      state.adminPassword = newPwd;
+      showToast('本機管理員密碼已更新', 'success');
+      document.getElementById('new-admin-pwd').value = '';
+    }
+  });
+
   // Book slot form submit
   document.getElementById('booking-form').addEventListener('submit', async (e) => {
     e.preventDefault();

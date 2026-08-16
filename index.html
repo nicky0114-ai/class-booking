@@ -167,6 +167,15 @@
               </button>
             </div>
           </div>
+
+          <!-- Section 4: Change Admin Password -->
+          <div class="admin-card">
+            <h4><i class="fa-solid fa-key"></i> 修改管理員密碼</h4>
+            <form id="change-pwd-form" style="display: flex; gap: 10px; margin-top: 10px; align-items: center;">
+              <input type="password" id="new-admin-pwd" class="glass-input" placeholder="輸入新的管理密碼" required style="flex: 1; margin-bottom: 0;">
+              <button type="submit" class="btn btn-primary" style="height: var(--input-height); white-space: nowrap; padding: 0 15px;">儲存</button>
+            </form>
+          </div>
         </div>
 
       </div>
@@ -313,7 +322,7 @@
         <form id="verify-form">
           <div class="form-group">
             <label for="admin-pwd">請輸入管理密碼：</label>
-            <input type="password" id="admin-pwd" class="glass-input" placeholder="預設密碼為 admin" required>
+            <input type="password" id="admin-pwd" class="glass-input" placeholder="請輸入密碼" required>
           </div>
           <div class="modal-actions">
             <button type="button" class="btn btn-secondary-outline" id="btn-verify-cancel">取消</button>
