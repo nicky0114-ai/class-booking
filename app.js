@@ -860,7 +860,7 @@ function setupEventListeners() {
       openModal(adminPanel);
       renderCalendar();
     } else {
-      showToast('管理密碼驗證錯誤！(預設密碼為 admin)', 'error');
+      showToast('管理密碼驗證錯誤！(請輸入密碼)', 'error');
     }
   });
 
