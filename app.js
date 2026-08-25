@@ -510,8 +510,30 @@ function renderCalendar() {
     
     const wTitle = document.createElement('div');
     wTitle.className = 'week-title';
-    wTitle.innerHTML = `<i class="fa-solid fa-calendar-week" style="color:var(--primary-color);"></i> 第 ${weekIndex + 1} 週 (${formatDateLabelShort(weekDates[0])} ~ ${formatDateLabelShort(weekDates[weekDates.length - 1])})`;
+    wTitle.style.display = 'flex';
+    wTitle.style.justifyContent = 'space-between';
+    wTitle.style.alignItems = 'center';
+    wTitle.style.flexWrap = 'wrap';
+    wTitle.style.gap = '8px';
+    
+    wTitle.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-calendar-week" style="color:var(--primary-color);"></i> 
+        第 ${weekIndex + 1} 週 (${formatDateLabelShort(weekDates[0])} ~ ${formatDateLabelShort(weekDates[weekDates.length - 1])})
+      </div>
+      <button class="btn btn-secondary-outline btn-sm btn-export-week" style="font-size:11px; padding:4px 8px; height:auto; display:inline-flex;" data-week-index="${weekIndex + 1}">
+        <i class="fa-solid fa-download"></i> 下載此週圖檔
+      </button>
+    `;
+    
     weekDiv.appendChild(wTitle);
+
+    // Bind export week listener
+    const exportBtn = wTitle.querySelector('.btn-export-week');
+    exportBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      exportWeekToPng(weekDiv, weekIndex + 1);
+    });
     
     const table = document.createElement('table');
     table.className = 'week-table';
@@ -836,6 +858,38 @@ function exportToPng() {
     
     showToast('成果圖檔下載成功！', 'success');
   }).catch(err => {
+    showToast('圖片生成失敗: ' + err.message, 'error');
+  });
+}
+
+function exportWeekToPng(weekElement, weekNum) {
+  const act = state.currentActivity;
+  if (!act) return;
+
+  showToast(`正在生成第 ${weekNum} 週課表圖檔...`, 'info');
+
+  const exportBtn = weekElement.querySelector('.btn-export-week');
+  if (exportBtn) exportBtn.style.display = 'none';
+
+  html2canvas(weekElement, {
+    scale: 2.5,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false
+  }).then(canvas => {
+    const imgUrl = canvas.toDataURL("image/png");
+    const link = document.createElement('a');
+    link.download = `${act.title}_第${weekNum}週_時段登記結果.png`;
+    link.href = imgUrl;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    if (exportBtn) exportBtn.style.display = 'inline-flex';
+    showToast(`第 ${weekNum} 週圖檔下載成功！`, 'success');
+  }).catch(err => {
+    if (exportBtn) exportBtn.style.display = 'inline-flex';
     showToast('圖片生成失敗: ' + err.message, 'error');
   });
 }
