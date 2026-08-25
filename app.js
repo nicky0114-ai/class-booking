@@ -151,6 +151,7 @@ let state = {
   currentActivity: null,
   isAdmin: false,
   adminPassword: '',
+  correctAdminPassword: 'admin',
   bookedSlotsLocal: JSON.parse(localStorage.getItem('booked_slots_local_v2')) || {}, // local registry key maps: { "actId_slotKey": "pin" }
   tempAiSlots: null
 };
@@ -184,6 +185,7 @@ const cellAdminModal = document.getElementById('cell-admin-modal');
 window.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   initFirebaseOrLocal();
+  updateAdminUI();
 });
 
 // 1. Initialize DB: Verify Firebase config or fallback to LocalStorage
@@ -264,7 +266,7 @@ function syncWithFirebase() {
       return act;
     });
 
-    state.adminPassword = data.adminPassword || 'admin';
+    state.correctAdminPassword = data.adminPassword || 'admin';
     state.activities = syncedActivities;
 
     // Trigger UI updates
@@ -855,21 +857,39 @@ function setupEventListeners() {
     });
   });
 
-  // Admin Log In toggle
-  const adminToggle = document.getElementById('btn-admin-toggle');
-  adminToggle.addEventListener('click', () => {
-    if (state.isAdmin) {
-      state.isAdmin = false;
-      state.adminPassword = '';
-      document.body.classList.remove('admin-mode');
-      adminToggle.innerHTML = '<i class="fa-solid fa-user-gear"></i> 管理登入';
-      adminToggle.className = 'btn btn-secondary';
-      showToast('已安全登出管理控制台', 'info');
-      renderLobby();
-      renderCalendar();
-    } else {
-      openModal(verifyModal);
-    }
+  // Admin Log In button click
+  document.getElementById('btn-admin-login').addEventListener('click', () => {
+    openModal(verifyModal);
+  });
+
+  // Admin Create Activity button click
+  document.getElementById('btn-admin-create-act').addEventListener('click', () => {
+    document.getElementById('manual-modal-title').innerHTML = '<i class="fa-solid fa-file-invoice"></i> 手動建立填報活動';
+    document.getElementById('edit-activity-id').value = '';
+    document.getElementById('act-title').value = '';
+    document.getElementById('act-subtitle').value = '';
+    document.getElementById('act-desc').value = '';
+    
+    const today = new Date();
+    const future = new Date();
+    future.setDate(today.getDate() + 25);
+    
+    document.getElementById('act-start-date').value = formatDateIso(today);
+    document.getElementById('act-end-date').value = formatDateIso(future);
+    document.getElementById('act-classes').value = '501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516';
+    document.getElementById('act-capacity').value = 1;
+    
+    openModal(manualModal);
+  });
+
+  // Admin Log Out button click
+  document.getElementById('btn-admin-logout').addEventListener('click', () => {
+    state.isAdmin = false;
+    state.adminPassword = '';
+    updateAdminUI();
+    showToast('已安全登出管理控制台', 'info');
+    renderLobby();
+    renderCalendar();
   });
 
   // Close Admin controls sidebar
@@ -882,16 +902,14 @@ function setupEventListeners() {
     e.preventDefault();
     const pwd = document.getElementById('admin-pwd').value;
     
-    const correctPwd = isFirebaseMode ? state.adminPassword : db.adminPassword;
+    const correctPwd = isFirebaseMode ? state.correctAdminPassword : db.adminPassword;
     
     if (pwd === correctPwd) {
       state.isAdmin = true;
       state.adminPassword = pwd;
-      document.body.classList.add('admin-mode');
       
       closeModal(verifyModal);
-      adminToggle.innerHTML = '<i class="fa-solid fa-user-shield"></i> 管理控制台';
-      adminToggle.className = 'btn btn-accent';
+      updateAdminUI();
       showToast('管理員登入成功', 'success');
       
       openModal(adminPanel);
@@ -915,7 +933,7 @@ function setupEventListeners() {
       // 1. Firebase update
       firebaseDbRef.child('adminPassword').set(newPwd)
         .then(() => {
-          state.adminPassword = newPwd;
+          state.correctAdminPassword = newPwd;
           showToast('管理員密碼已更新並上傳雲端', 'success');
           document.getElementById('new-admin-pwd').value = '';
         })
@@ -926,7 +944,7 @@ function setupEventListeners() {
       // 2. LocalStorage update
       db.adminPassword = newPwd;
       saveLocalDb();
-      state.adminPassword = newPwd;
+      state.correctAdminPassword = newPwd;
       showToast('本機管理員密碼已更新', 'success');
       document.getElementById('new-admin-pwd').value = '';
     }
@@ -1378,7 +1396,7 @@ function setupEventListeners() {
           }
         };
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1451,4 +1469,22 @@ function showToast(message, type = 'success') {
       toast.remove();
     });
   }, 4000);
+}
+
+function updateAdminUI() {
+  const loginBtn = document.getElementById('btn-admin-login');
+  const createBtn = document.getElementById('btn-admin-create-act');
+  const logoutBtn = document.getElementById('btn-admin-logout');
+  
+  if (state.isAdmin) {
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (createBtn) createBtn.style.display = 'inline-flex';
+    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+    document.body.classList.add('admin-mode');
+  } else {
+    if (loginBtn) loginBtn.style.display = 'inline-flex';
+    if (createBtn) createBtn.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    document.body.classList.remove('admin-mode');
+  }
 }
