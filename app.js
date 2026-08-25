@@ -1025,21 +1025,26 @@ function setupEventListeners() {
 
   // Release booking click
   document.getElementById('btn-release-submit').addEventListener('click', async (e) => {
-    const btn = e.target;
-    const date = btn.dataset.date;
-    const sessionId = btn.dataset.sessionId;
-    const className = document.getElementById('release-class-select').value;
-    const pin = document.getElementById('release-pin').value;
-    
-    const slotKey = `${date}_${sessionId}`;
-    const actId = state.currentActivity.id;
+    try {
+      const btn = document.getElementById('btn-release-submit');
+      const date = btn.dataset.date;
+      const sessionId = btn.dataset.sessionId;
+      const className = document.getElementById('release-class-select').value;
+      const pin = document.getElementById('release-pin').value;
+      
+      if (!date || !sessionId) {
+        showToast('無法讀取時段資訊', 'error');
+        return;
+      }
 
-    if (isFirebaseMode) {
-      // 1. Firebase Release Flow
-      const actIndex = state.activities.findIndex(a => a.id === actId);
-      const slotRef = firebaseDbRef.child(`activities`).child(actIndex).child('slots').child(slotKey);
+      const slotKey = `${date}_${sessionId}`;
+      const actId = state.currentActivity.id;
 
-      try {
+      if (isFirebaseMode) {
+        // 1. Firebase Release Flow
+        const actIndex = state.activities.findIndex(a => a.id === actId);
+        const slotRef = firebaseDbRef.child(`activities`).child(actIndex).child('slots').child(slotKey);
+
         const snapshot = await slotRef.once('value');
         const slotData = snapshot.val();
         
@@ -1073,36 +1078,42 @@ function setupEventListeners() {
 
         closeModal(releaseModal);
         showToast(`已釋放 ${className} 班時段`, 'success');
-      } catch (err) {
-        showToast('Firebase 釋放失敗', 'error');
+      } else {
+        // 2. LocalStorage Release Flow
+        const act = db.activities.find(a => a.id === actId);
+        const slotData = act ? act.slots[slotKey] : null;
+        
+        if (!slotData || !slotData.bookings || !slotData.bookings[className]) {
+          showToast('查無該班級登記紀錄', 'error');
+          return;
+        }
+
+        const correctPin = slotData.bookings[className].pin;
+        const isCorrectAdmin = state.isAdmin;
+
+        if (correctPin !== pin && !isCorrectAdmin) {
+          showToast('取消密碼驗證錯誤！', 'error');
+          return;
+        }
+
+        delete slotData.bookings[className];
+        if (Object.keys(slotData.bookings).length === 0) {
+          delete act.slots[slotKey];
+        }
+        saveLocalDb();
+
+        // Clean local keys
+        const ownKey = `${actId}_${slotKey}_${className}`;
+        delete state.bookedSlotsLocal[ownKey];
+        localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
+
+        closeModal(releaseModal);
+        showToast(`已釋放 ${className} 班時段`, 'success');
+        loadActivity(actId);
       }
-    } else {
-      // 2. LocalStorage Release Flow
-      const act = db.activities.find(a => a.id === actId);
-      const slotData = act.slots[slotKey];
-      
-      const correctPin = slotData.bookings[className].pin;
-      const isCorrectAdmin = state.isAdmin;
-
-      if (correctPin !== pin && !isCorrectAdmin) {
-        showToast('取消密碼驗證錯誤！', 'error');
-        return;
-      }
-
-      delete slotData.bookings[className];
-      if (Object.keys(slotData.bookings).length === 0) {
-        delete act.slots[slotKey];
-      }
-      saveLocalDb();
-
-      // Clean local keys
-      const ownKey = `${actId}_${slotKey}_${className}`;
-      delete state.bookedSlotsLocal[ownKey];
-      localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
-
-      closeModal(releaseModal);
-      showToast(`已釋放 ${className} 班時段`, 'success');
-      loadActivity(actId);
+    } catch (err) {
+      console.error('Release error:', err);
+      showToast('釋放失敗: ' + err.message, 'error');
     }
   });
 
