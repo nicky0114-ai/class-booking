@@ -953,22 +953,27 @@ function setupEventListeners() {
   // Book slot form submit
   document.getElementById('booking-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const form = e.target;
-    const date = form.dataset.date;
-    const sessionId = form.dataset.sessionId;
-    const className = document.getElementById('booking-class-select').value;
-    const pin = document.getElementById('booking-pin').value;
-    const slotKey = `${date}_${sessionId}`;
-    
-    const actId = state.currentActivity.id;
+    try {
+      const form = document.getElementById('booking-form');
+      const date = form.dataset.date;
+      const sessionId = form.dataset.sessionId;
+      const className = document.getElementById('booking-class-select').value;
+      const pin = document.getElementById('booking-pin').value;
+      
+      if (!date || !sessionId) {
+        showToast('無法讀取時段資訊', 'error');
+        return;
+      }
 
-    if (isFirebaseMode) {
-      // 1. Firebase Write Flow
-      const slotRef = firebaseDbRef.child(`activities`).child(
-        state.activities.findIndex(a => a.id === actId)
-      ).child('slots').child(slotKey);
+      const slotKey = `${date}_${sessionId}`;
+      const actId = state.currentActivity.id;
 
-      try {
+      if (isFirebaseMode) {
+        // 1. Firebase Write Flow
+        const slotRef = firebaseDbRef.child(`activities`).child(
+          state.activities.findIndex(a => a.id === actId)
+        ).child('slots').child(slotKey);
+
         const snapshot = await slotRef.once('value');
         let slotData = snapshot.val();
 
@@ -993,33 +998,34 @@ function setupEventListeners() {
 
         closeModal(bookingModal);
         showToast(`${className} 班登記成功！`, 'success');
-      } catch (err) {
-        showToast('Firebase 寫入失敗: ' + err.message, 'error');
-      }
-    } else {
-      // 2. LocalStorage Write Flow
-      const act = db.activities.find(a => a.id === actId);
-      let slotData = act.slots[slotKey];
-      
-      if (!slotData) {
-        slotData = { status: 'reserved', bookings: {} };
       } else {
-        slotData.status = 'reserved';
-        slotData.bookings = slotData.bookings || {};
+        // 2. LocalStorage Write Flow
+        const act = db.activities.find(a => a.id === actId);
+        let slotData = act.slots[slotKey];
+        
+        if (!slotData) {
+          slotData = { status: 'reserved', bookings: {} };
+        } else {
+          slotData.status = 'reserved';
+          slotData.bookings = slotData.bookings || {};
+        }
+
+        slotData.bookings[className] = { pin: pin };
+        act.slots[slotKey] = slotData;
+        saveLocalDb();
+
+        // Save local device lock keys
+        const ownKey = `${actId}_${slotKey}_${className}`;
+        state.bookedSlotsLocal[ownKey] = pin;
+        localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
+
+        closeModal(bookingModal);
+        showToast(`${className} 班登記成功！`, 'success');
+        loadActivity(actId);
       }
-
-      slotData.bookings[className] = { pin: pin };
-      act.slots[slotKey] = slotData;
-      saveLocalDb();
-
-      // Save local device lock keys
-      const ownKey = `${actId}_${slotKey}_${className}`;
-      state.bookedSlotsLocal[ownKey] = pin;
-      localStorage.setItem('booked_slots_local_v2', JSON.stringify(state.bookedSlotsLocal));
-
-      closeModal(bookingModal);
-      showToast(`${className} 班登記成功！`, 'success');
-      loadActivity(actId);
+    } catch (err) {
+      console.error('Booking error:', err);
+      showToast('登記失敗: ' + err.message, 'error');
     }
   });
 
