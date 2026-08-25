@@ -341,13 +341,48 @@ function renderLobby() {
 
       <div class="lobby-card-footer">
         <span class="lobby-card-progress">${bookedCount} / ${totalCount} 班已登記 (${percent}%)</span>
-        <button class="btn btn-primary btn-sm">進入登記 <i class="fa-solid fa-chevron-right"></i></button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          ${state.isAdmin ? `<button class="btn btn-danger btn-sm btn-delete-lobby-card" style="padding: 5px 10px; height: auto;"><i class="fa-solid fa-trash-can"></i> 刪除</button>` : ''}
+          <button class="btn btn-primary btn-sm">進入登記 <i class="fa-solid fa-chevron-right"></i></button>
+        </div>
       </div>
     `;
 
     card.addEventListener('click', () => {
       enterActivity(act.id);
     });
+
+    if (state.isAdmin) {
+      const deleteBtn = card.querySelector('.btn-delete-lobby-card');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', async (e) => {
+          e.stopPropagation(); // prevent entering activity
+          if (!confirm(`確定要刪除整個活動「${act.title}」嗎？所有班級登記將被抹除！`)) return;
+          
+          const actId = act.id;
+          if (isFirebaseMode) {
+            const actIndex = state.activities.findIndex(a => a.id === actId);
+            try {
+              const updatedList = [...state.activities];
+              updatedList.splice(actIndex, 1);
+              await firebaseDbRef.child('activities').set(updatedList);
+              showToast('活動已從 Firebase 移除', 'success');
+              // renderLobby is automatically called by Firebase onValue listener!
+            } catch (err) {
+              showToast('刪除失敗: ' + err.message, 'error');
+            }
+          } else {
+            const idx = db.activities.findIndex(a => a.id === actId);
+            if (idx !== -1) {
+              db.activities.splice(idx, 1);
+              saveLocalDb();
+              renderLobby();
+              showToast('活動已自本機移除', 'success');
+            }
+          }
+        });
+      }
+    }
 
     activitiesLobbyGrid.appendChild(card);
   });
@@ -830,6 +865,7 @@ function setupEventListeners() {
       adminToggle.innerHTML = '<i class="fa-solid fa-user-gear"></i> 管理登入';
       adminToggle.className = 'btn btn-secondary';
       showToast('已安全登出管理控制台', 'info');
+      renderLobby();
       renderCalendar();
     } else {
       openModal(verifyModal);
@@ -859,6 +895,7 @@ function setupEventListeners() {
       showToast('管理員登入成功', 'success');
       
       openModal(adminPanel);
+      renderLobby();
       renderCalendar();
     } else {
       showToast('管理密碼驗證錯誤！(請輸入密碼)', 'error');
