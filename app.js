@@ -151,7 +151,8 @@ let state = {
   currentActivity: null,
   isAdmin: false,
   adminPassword: '',
-  bookedSlotsLocal: JSON.parse(localStorage.getItem('booked_slots_local_v2')) || {} // local registry key maps: { "actId_slotKey": "pin" }
+  bookedSlotsLocal: JSON.parse(localStorage.getItem('booked_slots_local_v2')) || {}, // local registry key maps: { "actId_slotKey": "pin" }
+  tempAiSlots: null
 };
 
 // DOM Elements
@@ -1203,7 +1204,7 @@ function setupEventListeners() {
       dateRange: { start, end },
       capacity,
       sessions,
-      slots: {}
+      slots: state.tempAiSlots || {}
     };
 
     if (isFirebaseMode) {
@@ -1212,13 +1213,14 @@ function setupEventListeners() {
         const index = listCopy.findIndex(a => a.id === actData.id);
         
         if (index >= 0) {
-          actData.slots = listCopy[index].slots || {}; // preserve bookings
+          actData.slots = Object.assign(listCopy[index].slots || {}, state.tempAiSlots || {}); // preserve bookings and merge AI slots
           listCopy[index] = actData;
         } else {
           listCopy.push(actData);
         }
 
         await firebaseDbRef.child('activities').set(listCopy);
+        state.tempAiSlots = null; // clear
         closeModal(manualModal);
         showToast('活動已儲存至 Firebase', 'success');
         enterActivity(actData.id);
@@ -1229,16 +1231,164 @@ function setupEventListeners() {
       // LocalStorage Mode
       const index = db.activities.findIndex(a => a.id === actData.id);
       if (index >= 0) {
-        actData.slots = db.activities[index].slots || {};
+        actData.slots = Object.assign(db.activities[index].slots || {}, state.tempAiSlots || {});
         db.activities[index] = actData;
       } else {
         db.activities.push(actData);
       }
       saveLocalDb();
+      state.tempAiSlots = null; // clear
       closeModal(manualModal);
       showToast('活動已儲存至本機', 'success');
       fetchActivities(actData.id);
     }
+  });
+
+  // Gemini API Key Modal Elements
+  const geminiKeyModal = document.getElementById('gemini-key-modal');
+  
+  // Set Gemini Key button
+  document.getElementById('btn-set-gemini-key').addEventListener('click', () => {
+    const savedKey = localStorage.getItem('gemini_api_key') || '';
+    document.getElementById('gemini-api-key').value = savedKey;
+    openModal(geminiKeyModal);
+  });
+  
+  // Close Gemini Key modal
+  document.getElementById('btn-gemini-key-close').addEventListener('click', () => closeModal(geminiKeyModal));
+  document.getElementById('btn-gemini-key-cancel').addEventListener('click', () => closeModal(geminiKeyModal));
+  
+  // Save Gemini Key
+  document.getElementById('gemini-key-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const key = document.getElementById('gemini-api-key').value.trim();
+    if (key) {
+      localStorage.setItem('gemini_api_key', key);
+      showToast('Gemini API 金鑰設定成功！', 'success');
+      closeModal(geminiKeyModal);
+    }
+  });
+
+  // AI File Upload Trigger
+  const fileInput = document.getElementById('ai-file-input');
+  document.getElementById('btn-ai-upload-trigger').addEventListener('click', () => {
+    const key = localStorage.getItem('gemini_api_key');
+    if (!key) {
+      showToast('請先點選左側「設定 API 金鑰」！', 'error');
+      openModal(geminiKeyModal);
+      return;
+    }
+    fileInput.click();
+  });
+
+  // File selected handler
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const apiKey = localStorage.getItem('gemini_api_key');
+    if (!apiKey) {
+      showToast('請先設定 Gemini API 金鑰！', 'error');
+      return;
+    }
+
+    // Show loading
+    const loadingStatus = document.getElementById('ai-loading-status');
+    const loadingText = document.getElementById('ai-loading-text');
+    loadingStatus.style.display = 'flex';
+    loadingText.textContent = '讀取課表圖片並轉換中...';
+
+    // Convert file to base64
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const base64Url = reader.result;
+        const base64Data = base64Url.split(',')[1];
+        const mimeType = file.type;
+
+        loadingText.textContent = '🤖 AI 正在辨識您的紙本課表（標題、日期、停用時段...），請稍候...';
+
+        const prompt = `請分析這張學校班級時段登記調查表的照片，並將其解析為 JSON 格式。請注意：
+1. 日期區間：請推算年份為 2025 年，並列出開始日期與結束日期，格式為 YYYY-MM-DD。
+2. 停用與屏蔽時段：列出照片中被劃掉、屏蔽或有特別標註停用的時段（例如「專輔校外研習」、「講座」），格式為 'YYYY-MM-DD_節次'（節次為 1, 2, 3, 4, 5, 6 之一，如果是午休則為 lunch）。
+3. 班級列表：列出此年級所有可登記的班級名單（例如 ["501", "502", ..., "516"]）。
+請返回符合以下範例格式的 JSON，不要包含任何 markdown 標記（如 \`\`\`json）：
+{
+  "title": "時段登記活動標題",
+  "subtitle": "副標題或主題說明",
+  "description": "給老師看的引言或說明內容",
+  "classes": ["501", "502", "503"],
+  "dateRange": {"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"},
+  "slots": {
+    "YYYY-MM-DD_節次": {"status": "blocked", "note": "停用原因"}
+  }
+}`;
+
+        const payload = {
+          contents: [{
+            parts: [
+              { text: prompt },
+              {
+                inlineData: {
+                  mimeType: mimeType,
+                  data: base64Data
+                }
+              }
+            ]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json"
+          }
+        };
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error?.message || 'Gemini API 回傳錯誤');
+        }
+
+        const resData = await response.json();
+        const responseText = resData.candidates[0].content.parts[0].text;
+        const resJson = JSON.parse(responseText.trim());
+
+        // Fill form fields
+        document.getElementById('act-title').value = resJson.title || '';
+        document.getElementById('act-subtitle').value = resJson.subtitle || '';
+        document.getElementById('act-desc').value = resJson.description || '';
+        if (resJson.dateRange) {
+          if (resJson.dateRange.start) document.getElementById('act-start-date').value = resJson.dateRange.start;
+          if (resJson.dateRange.end) document.getElementById('act-end-date').value = resJson.dateRange.end;
+        }
+        if (resJson.classes) {
+          document.getElementById('act-classes').value = resJson.classes.join(', ');
+        }
+
+        // Store blocked slots to state
+        state.tempAiSlots = resJson.slots || {};
+
+        showToast('🤖 AI 智慧解析成功！已自動帶入表單欄位，請檢查後點選「儲存」。', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('AI 辨識失敗: ' + err.message, 'error');
+      } finally {
+        loadingStatus.style.display = 'none';
+        fileInput.value = ''; // clear input
+      }
+    };
+
+    reader.onerror = () => {
+      showToast('檔案讀取失敗', 'error');
+      loadingStatus.style.display = 'none';
+    };
+
+    reader.readAsDataURL(file);
   });
 }
 
