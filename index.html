@@ -75,7 +75,10 @@
       <!-- Hero / Description Card -->
       <section class="glass-card hero-card" id="activity-info">
         <div class="hero-details">
-          <div class="badge-active">活動填報中</div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+            <div id="activity-status-badge" class="badge-active">活動填報中</div>
+            <span id="activity-open-time-range" class="help-text" style="color: var(--text-secondary); font-size: 12px; margin-bottom: 0; font-weight: 500;"></span>
+          </div>
           <h2 id="activity-title">-- 載入中 --</h2>
           <h3 id="activity-subtitle">-- 載入中 --</h3>
           <p id="activity-description">請稍候，正在讀取活動資訊...</p>
@@ -324,6 +327,17 @@
             <div class="form-group">
               <label for="act-end-date">結束日期：</label>
               <input type="date" id="act-end-date" class="glass-input" required>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="act-open-start">開放選填開始時間（留空表示不限制）：</label>
+              <input type="datetime-local" id="act-open-start" class="glass-input">
+            </div>
+            <div class="form-group">
+              <label for="act-open-end">開放選填截止時間（留空表示不限制）：</label>
+              <input type="datetime-local" id="act-open-end" class="glass-input">
             </div>
           </div>
 

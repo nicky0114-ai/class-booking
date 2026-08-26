@@ -430,6 +430,53 @@ function renderActivityInfo() {
   activityTitle.textContent = act.title;
   activitySubtitle.textContent = act.subtitle;
   activityDescription.textContent = act.description || '無填寫說明。';
+
+  const badge = document.getElementById('activity-status-badge');
+  const timeRangeSpan = document.getElementById('activity-open-time-range');
+
+  if (act.openRange && (act.openRange.start || act.openRange.end)) {
+    const startStr = act.openRange.start ? act.openRange.start.replace('T', ' ') : '無限制';
+    const endStr = act.openRange.end ? act.openRange.end.replace('T', ' ') : '無限制';
+    timeRangeSpan.textContent = `開放時間：${startStr} ~ ${endStr}`;
+    
+    // Check status
+    const now = new Date();
+    const start = act.openRange.start ? new Date(act.openRange.start) : null;
+    const end = act.openRange.end ? new Date(act.openRange.end) : null;
+
+    if (start && now < start) {
+      badge.className = 'badge-not-started';
+      badge.textContent = '選填未開始';
+    } else if (end && now > end) {
+      badge.className = 'badge-closed';
+      badge.textContent = '選填已截止';
+    } else {
+      badge.className = 'badge-active';
+      badge.textContent = '活動選填中';
+    }
+  } else {
+    timeRangeSpan.textContent = '開放時間：無時間限制';
+    badge.className = 'badge-active';
+    badge.textContent = '活動選填中';
+  }
+}
+
+function isActivityOpen(act) {
+  if (state.isAdmin) return { open: true }; // Admin always has access
+  if (!act.openRange) return { open: true };
+  
+  const now = new Date();
+  const start = act.openRange.start ? new Date(act.openRange.start) : null;
+  const end = act.openRange.end ? new Date(act.openRange.end) : null;
+  
+  if (start && now < start) {
+    const startStr = act.openRange.start.replace('T', ' ');
+    return { open: false, reason: `本活動尚未開始開放選填！開放時間為：${startStr}` };
+  }
+  if (end && now > end) {
+    return { open: false, reason: '本活動選填時間已截止！' };
+  }
+  return { open: true };
 }
 
 function renderProgress() {
@@ -792,6 +839,12 @@ function openBookingModal(date, sessionId) {
   }
 
   const act = state.currentActivity;
+  const openCheck = isActivityOpen(act);
+  if (!openCheck.open) {
+    showToast(openCheck.reason, 'warning');
+    return;
+  }
+
   const session = act.sessions.find(s => s.id === sessionId);
   const sessName = session ? `第 ${session.name} 節 (${session.time})` : '';
   const dateStr = formatDateLabelHeader(new Date(date));
@@ -905,6 +958,12 @@ function openBookingModal(date, sessionId) {
 // 6. Release Modal Setup
 function openReleaseModal(date, sessionId, bookedClasses) {
   const act = state.currentActivity;
+  const openCheck = isActivityOpen(act);
+  if (!openCheck.open) {
+    showToast(openCheck.reason, 'warning');
+    return;
+  }
+
   const session = act.sessions.find(s => s.id === sessionId);
   const sessName = session ? `第 ${session.name} 節 (${session.time})` : '';
   const dateStr = formatDateLabelHeader(new Date(date));
@@ -1195,6 +1254,12 @@ function setupEventListeners() {
       const act = state.currentActivity;
       const actId = act.id;
 
+      const openCheck = isActivityOpen(act);
+      if (!openCheck.open) {
+        showToast(openCheck.reason, 'error');
+        return;
+      }
+
       if (isFirebaseMode) {
         // 1. Firebase Write Flow
         const slotRef = firebaseDbRef.child(`activities`).child(
@@ -1321,7 +1386,14 @@ function setupEventListeners() {
       }
 
       const slotKey = `${date}_${sessionId}`;
-      const actId = state.currentActivity.id;
+      const act = state.currentActivity;
+      const actId = act.id;
+
+      const openCheck = isActivityOpen(act);
+      if (!openCheck.open) {
+        showToast(openCheck.reason, 'error');
+        return;
+      }
 
       if (isFirebaseMode) {
         // 1. Firebase Release Flow
@@ -1494,6 +1566,8 @@ function setupEventListeners() {
     document.getElementById('act-desc').value = act.description || '';
     document.getElementById('act-start-date').value = act.dateRange.start;
     document.getElementById('act-end-date').value = act.dateRange.end;
+    document.getElementById('act-open-start').value = (act.openRange && act.openRange.start) ? act.openRange.start : '';
+    document.getElementById('act-open-end').value = (act.openRange && act.openRange.end) ? act.openRange.end : '';
     document.getElementById('act-classes').value = (act.classes || []).join(', ');
     document.getElementById('act-capacity').value = act.capacity || 1;
     
@@ -1514,6 +1588,8 @@ function setupEventListeners() {
     
     document.getElementById('act-start-date').value = formatDateIso(today);
     document.getElementById('act-end-date').value = formatDateIso(future);
+    document.getElementById('act-open-start').value = '';
+    document.getElementById('act-open-end').value = '';
     document.getElementById('act-classes').value = '501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516';
     document.getElementById('act-capacity').value = 1;
     
@@ -1530,6 +1606,8 @@ function setupEventListeners() {
     const description = document.getElementById('act-desc').value;
     const start = document.getElementById('act-start-date').value;
     const end = document.getElementById('act-end-date').value;
+    const openStart = document.getElementById('act-open-start').value;
+    const openEnd = document.getElementById('act-open-end').value;
     const classesStr = document.getElementById('act-classes').value;
     const capacity = parseInt(document.getElementById('act-capacity').value) || 1;
     
@@ -1551,6 +1629,7 @@ function setupEventListeners() {
       description,
       classes,
       dateRange: { start, end },
+      openRange: { start: openStart, end: openEnd },
       capacity,
       sessions,
       slots: state.tempAiSlots || {}
