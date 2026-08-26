@@ -1121,6 +1121,31 @@ function setupEventListeners() {
           slotData.bookings = slotData.bookings || {};
         }
 
+        if (act.bookingTypes && act.bookingTypes.length > 0) {
+          if (!bookingType) {
+            showToast('請選擇登記項目！', 'error');
+            return;
+          }
+          const typeAlreadyTaken = Object.values(slotData.bookings).some(b => b.type === bookingType);
+          if (typeAlreadyTaken) {
+            showToast(`此時段已有人登記「${bookingType}」，請選擇其他項目！`, 'error');
+            return;
+          }
+          let alreadyBookedType = false;
+          Object.values(act.slots).forEach(s => {
+            if (s.bookings) {
+              const classBooking = s.bookings[className];
+              if (classBooking && classBooking.type === bookingType) {
+                alreadyBookedType = true;
+              }
+            }
+          });
+          if (alreadyBookedType) {
+            showToast(`貴班已在其他時段登記過「${bookingType}」！`, 'error');
+            return;
+          }
+        }
+
         // Add class booking
         slotData.bookings[className] = { pin: pin, type: bookingType };
         await slotRef.set(slotData);
@@ -1142,6 +1167,31 @@ function setupEventListeners() {
         } else {
           slotData.status = 'reserved';
           slotData.bookings = slotData.bookings || {};
+        }
+
+        if (act.bookingTypes && act.bookingTypes.length > 0) {
+          if (!bookingType) {
+            showToast('請選擇登記項目！', 'error');
+            return;
+          }
+          const typeAlreadyTaken = Object.values(slotData.bookings).some(b => b.type === bookingType);
+          if (typeAlreadyTaken) {
+            showToast(`此時段已有人登記「${bookingType}」，請選擇其他項目！`, 'error');
+            return;
+          }
+          let alreadyBookedType = false;
+          Object.values(act.slots).forEach(s => {
+            if (s.bookings) {
+              const classBooking = s.bookings[className];
+              if (classBooking && classBooking.type === bookingType) {
+                alreadyBookedType = true;
+              }
+            }
+          });
+          if (alreadyBookedType) {
+            showToast(`貴班已在其他時段登記過「${bookingType}」！`, 'error');
+            return;
+          }
         }
 
         slotData.bookings[className] = { pin: pin, type: bookingType };
