@@ -333,8 +333,8 @@ function renderLobby() {
       badgeClass = 'badge-active';
     } else if (act.openRange && (act.openRange.start || act.openRange.end)) {
       const now = new Date();
-      const start = act.openRange.start ? new Date(act.openRange.start) : null;
-      const end = act.openRange.end ? new Date(act.openRange.end) : null;
+      const start = parseDatetime(act.openRange.start);
+      const end = parseDatetime(act.openRange.end);
 
       if (start && now < start) {
         statusText = '未開放';
@@ -461,8 +461,8 @@ function renderActivityInfo() {
     
     // Check status
     const now = new Date();
-    const start = act.openRange.start ? new Date(act.openRange.start) : null;
-    const end = act.openRange.end ? new Date(act.openRange.end) : null;
+    const start = parseDatetime(act.openRange.start);
+    const end = parseDatetime(act.openRange.end);
 
     if (start && now < start) {
       badge.className = 'badge-not-started';
@@ -486,8 +486,8 @@ function isActivityOpen(act) {
   if (!act.openRange) return { open: true };
   
   const now = new Date();
-  const start = act.openRange.start ? new Date(act.openRange.start) : null;
-  const end = act.openRange.end ? new Date(act.openRange.end) : null;
+  const start = parseDatetime(act.openRange.start);
+  const end = parseDatetime(act.openRange.end);
   
   if (start && now < start) {
     const startStr = act.openRange.start.replace('T', ' ');
@@ -845,10 +845,16 @@ function formatDateLabelHeader(date) {
   return `${m}/${d} (${weekDays[dayIndex]})`;
 }
 function formatDateLabelShort(dateOrStr) {
-  const date = typeof dateOrStr === 'string' ? new Date(dateOrStr) : dateOrStr;
+  const date = typeof dateOrStr === 'string' ? new Date(dateOrStr.replace(/-/g, '/')) : dateOrStr;
   const m = date.getMonth() + 1;
   const d = date.getDate();
   return `${m}/${d}`;
+}
+
+function parseDatetime(str) {
+  if (!str) return null;
+  const formatted = str.replace('T', ' ').replace(/-/g, '/');
+  return new Date(formatted);
 }
 
 // 5. Booking Modal Setup
