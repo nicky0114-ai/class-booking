@@ -729,7 +729,7 @@ function openBookingModal(date, sessionId) {
     
     // Track booked types for each class
     const classBookedTypes = {};
-    Object.values(act.slots).forEach(slot => {
+    Object.values(act.slots || {}).forEach(slot => {
       if (slot.status === 'reserved' && slot.bookings) {
         Object.entries(slot.bookings).forEach(([c, b]) => {
           classBookedTypes[c] = classBookedTypes[c] || [];
@@ -759,7 +759,7 @@ function openBookingModal(date, sessionId) {
       }
 
       const slotKey = `${date}_${sessionId}`;
-      const slot = act.slots[slotKey];
+      const slot = act.slots ? act.slots[slotKey] : null;
       const typesInSlot = slot && slot.bookings ? Object.values(slot.bookings).map(b => b.type).filter(Boolean) : [];
       const typesByClass = classBookedTypes[selectedClass] || [];
 
@@ -794,7 +794,7 @@ function openBookingModal(date, sessionId) {
     typeSelect.innerHTML = '';
 
     const bookedClasses = {};
-    Object.values(act.slots).forEach(slot => {
+    Object.values(act.slots || {}).forEach(slot => {
       if (slot.status === 'reserved' && slot.bookings) {
         Object.keys(slot.bookings).forEach(c => {
           bookedClasses[c] = true;
@@ -1100,7 +1100,8 @@ function setupEventListeners() {
       }
 
       const slotKey = `${date}_${sessionId}`;
-      const actId = state.currentActivity.id;
+      const act = state.currentActivity;
+      const actId = act.id;
 
       if (isFirebaseMode) {
         // 1. Firebase Write Flow
@@ -1132,7 +1133,7 @@ function setupEventListeners() {
             return;
           }
           let alreadyBookedType = false;
-          Object.values(act.slots).forEach(s => {
+          Object.values(act.slots || {}).forEach(s => {
             if (s.bookings) {
               const classBooking = s.bookings[className];
               if (classBooking && classBooking.type === bookingType) {
@@ -1180,7 +1181,7 @@ function setupEventListeners() {
             return;
           }
           let alreadyBookedType = false;
-          Object.values(act.slots).forEach(s => {
+          Object.values(act.slots || {}).forEach(s => {
             if (s.bookings) {
               const classBooking = s.bookings[className];
               if (classBooking && classBooking.type === bookingType) {
@@ -1496,7 +1497,7 @@ function setupEventListeners() {
       state.tempAiSlots = null; // clear
       closeModal(manualModal);
       showToast('活動已儲存至本機', 'success');
-      fetchActivities(actData.id);
+      enterActivity(actData.id);
     }
   });
 
