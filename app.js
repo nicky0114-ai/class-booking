@@ -325,12 +325,32 @@ function renderLobby() {
     const totalCount = classes.length;
     const percent = totalCount > 0 ? Math.round((bookedCount / totalCount) * 100) : 0;
 
+    let statusText = '填報中';
+    let badgeClass = 'badge-active';
+
+    if (percent === 100) {
+      statusText = '已完成';
+      badgeClass = 'badge-active';
+    } else if (act.openRange && (act.openRange.start || act.openRange.end)) {
+      const now = new Date();
+      const start = act.openRange.start ? new Date(act.openRange.start) : null;
+      const end = act.openRange.end ? new Date(act.openRange.end) : null;
+
+      if (start && now < start) {
+        statusText = '未開放';
+        badgeClass = 'badge-not-started';
+      } else if (end && now > end) {
+        statusText = '已截止';
+        badgeClass = 'badge-closed';
+      }
+    }
+
     const card = document.createElement('div');
     card.className = 'glass-card lobby-card';
     card.innerHTML = `
       <div class="lobby-card-header">
         <h3>${act.title}</h3>
-        <span class="badge-active" style="margin-bottom: 0;">${percent === 100 ? '已完成' : '填報中'}</span>
+        <span class="${badgeClass}" style="margin-bottom: 0; white-space: nowrap;">${statusText}</span>
       </div>
       <p class="lobby-card-subtitle">${act.subtitle}</p>
       <div class="lobby-card-dates">
