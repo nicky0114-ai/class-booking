@@ -437,49 +437,128 @@ function renderProgress() {
   const classes = act.classes || [];
   const slots = act.slots || {};
   
-  const registeredClasses = {};
-  Object.values(slots).forEach(slot => {
-    if (slot.status === 'reserved' && slot.bookings) {
-      Object.keys(slot.bookings).forEach(cls => {
-        registeredClasses[cls] = true;
+  const hasTypes = act.bookingTypes && act.bookingTypes.length > 0;
+  
+  // Track all bookings per class
+  const classBookings = {};
+  classes.forEach(c => {
+    classBookings[c] = {};
+    if (hasTypes) {
+      act.bookingTypes.forEach(t => {
+        classBookings[c][t] = null;
       });
     }
   });
 
-  const registeredCount = Object.keys(registeredClasses).length;
-  const totalCount = classes.length;
-  const percent = totalCount > 0 ? Math.round((registeredCount / totalCount) * 100) : 0;
+  let totalBookingsCount = 0;
+  Object.entries(slots).forEach(([slotKey, slot]) => {
+    if (slot.status === 'reserved' && slot.bookings) {
+      Object.entries(slot.bookings).forEach(([cls, b]) => {
+        if (classBookings[cls] !== undefined) {
+          if (hasTypes) {
+            if (b.type) {
+              classBookings[cls][b.type] = slotKey;
+              totalBookingsCount++;
+            }
+          } else {
+            classBookings[cls]['standard'] = slotKey;
+            totalBookingsCount++;
+          }
+        }
+      });
+    }
+  });
+
+  const totalClasses = classes.length;
+  const totalPossibleBookings = hasTypes ? (totalClasses * act.bookingTypes.length) : totalClasses;
+  const percent = totalPossibleBookings > 0 ? Math.round((totalBookingsCount / totalPossibleBookings) * 100) : 0;
   
-  progressText.textContent = `${registeredCount} / ${totalCount} 班已登記 (${percent}%)`;
+  if (hasTypes) {
+    progressText.textContent = `${totalBookingsCount} / ${totalPossibleBookings} 項目已登記 (${percent}%)`;
+  } else {
+    progressText.textContent = `${totalBookingsCount} / ${totalClasses} 班已登記 (${percent}%)`;
+  }
   progressFill.style.width = `${percent}%`;
 
   classesList.innerHTML = '';
+  // Apply grid layout override if we have multiple items per class
+  if (hasTypes) {
+    classesList.style.gridTemplateColumns = 'repeat(auto-fill, minmax(110px, 1fr))';
+  } else {
+    classesList.style.gridTemplateColumns = '';
+  }
+
   classes.forEach(cls => {
     const badge = document.createElement('div');
     badge.className = 'class-badge';
-    badge.textContent = cls;
     
-    if (registeredClasses[cls]) {
-      badge.classList.add('completed');
-      
-      // Find where booked
-      let foundKey = null;
-      let foundSess = null;
-      Object.entries(slots).forEach(([key, s]) => {
-        if (s.status === 'reserved' && s.bookings && s.bookings[cls]) {
-          foundKey = key;
+    if (hasTypes) {
+      badge.style.display = 'flex';
+      badge.style.flexDirection = 'column';
+      badge.style.alignItems = 'center';
+      badge.style.gap = '4px';
+      badge.style.padding = '6px 4px';
+      badge.style.height = 'auto';
+
+      const titleSpan = document.createElement('span');
+      titleSpan.style.fontWeight = '800';
+      titleSpan.style.fontSize = '12px';
+      titleSpan.textContent = `${cls} 班`;
+      badge.appendChild(titleSpan);
+
+      const pillsContainer = document.createElement('div');
+      pillsContainer.style.display = 'flex';
+      pillsContainer.style.gap = '4px';
+      pillsContainer.style.fontSize = '9px';
+      pillsContainer.style.fontWeight = '700';
+
+      let allCompleted = true;
+      const tooltipLines = [];
+
+      act.bookingTypes.forEach(t => {
+        const slotKey = classBookings[cls][t];
+        const isBooked = !!slotKey;
+        if (!isBooked) allCompleted = false;
+
+        const pill = document.createElement('span');
+        pill.className = `type-indicator-pill ${isBooked ? 'booked' : 'unbooked'}`;
+        
+        // Show short name (生活 / 沙龍)
+        const shortName = t.replace('照', '');
+        pill.textContent = `${shortName}:${isBooked ? '✓' : '✗'}`;
+        pillsContainer.appendChild(pill);
+
+        if (isBooked) {
+          const [date, sessId] = slotKey.split('_');
+          const session = act.sessions.find(s => s.id === sessId);
+          const sessName = session ? `第${session.name}節` : '';
+          tooltipLines.push(`${t}：${formatDateLabelShort(date)} ${sessName}`);
+        } else {
+          tooltipLines.push(`${t}：尚未選填`);
         }
       });
 
-      if (foundKey) {
-        const [date, sessId] = foundKey.split('_');
+      badge.appendChild(pillsContainer);
+      badge.title = tooltipLines.join('\n');
+
+      if (allCompleted) {
+        badge.classList.add('completed');
+      }
+    } else {
+      // Standard mode
+      badge.textContent = cls;
+      const slotKey = classBookings[cls]['standard'];
+      if (slotKey) {
+        badge.classList.add('completed');
+        const [date, sessId] = slotKey.split('_');
         const session = act.sessions.find(s => s.id === sessId);
         const sessName = session ? `第${session.name}節` : '';
         badge.title = `已登記：${formatDateLabelShort(date)} ${sessName}`;
+      } else {
+        badge.title = '尚未登記';
       }
-    } else {
-      badge.title = '尚未登記';
     }
+    
     classesList.appendChild(badge);
   });
 }
@@ -975,6 +1054,19 @@ function exportWeekToPng(weekElement, weekNum) {
 
 // Bind event listeners
 function setupEventListeners() {
+  // Auto-format full-width numbers to half-width, limit to 4 digits
+  const formatPinInput = (e) => {
+    let val = e.target.value;
+    val = val.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0));
+    val = val.replace(/[^0-9]/g, '');
+    if (val.length > 4) {
+      val = val.substring(0, 4);
+    }
+    e.target.value = val;
+  };
+  document.getElementById('booking-pin').addEventListener('input', formatPinInput);
+  document.getElementById('release-pin').addEventListener('input', formatPinInput);
+
   // Return to Lobby buttons
   document.getElementById('btn-back-lobby').addEventListener('click', exitToLobby);
   document.getElementById('logo-lobby-btn').addEventListener('click', exitToLobby);

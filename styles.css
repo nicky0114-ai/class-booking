@@ -1087,3 +1087,21 @@ body.admin-mode .cell-slot:hover::after {
     justify-content: center;
   }
 }
+
+/* Photo Type Indicator Pills in Class Progress Badges */
+.type-indicator-pill {
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 9px;
+  display: inline-block;
+}
+.type-indicator-pill.booked {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.type-indicator-pill.unbooked {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
