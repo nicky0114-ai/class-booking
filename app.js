@@ -603,7 +603,10 @@ function renderCalendar() {
           } else if (currentCount < capacity) {
             // 2. Partial (Yellow)
             td.className += ' partial';
-            const classesLabel = bookedClasses.join(', ');
+            const classesLabel = bookedClasses.map(c => {
+              const b = bookings[c];
+              return c + (b && b.type ? `(${b.type.replace('照', '')})` : '');
+            }).join(', ');
             
             // Check if device booked this slot
             const ownBookedClasses = bookedClasses.filter(c => !!state.bookedSlotsLocal[`${act.id}_${slotKey}_${c}`]);
@@ -626,7 +629,10 @@ function renderCalendar() {
           } else {
             // 3. Fully Reserved (Green)
             td.className += ' reserved';
-            const classesLabel = bookedClasses.join(', ');
+            const classesLabel = bookedClasses.map(c => {
+              const b = bookings[c];
+              return c + (b && b.type ? `(${b.type.replace('照', '')})` : '');
+            }).join(', ');
             
             const ownBookedClasses = bookedClasses.filter(c => !!state.bookedSlotsLocal[`${act.id}_${slotKey}_${c}`]);
             const editIcon = (ownBookedClasses.length > 0 || state.isAdmin) ? '<i class="fa-solid fa-lock-open" style="font-size:8px;"></i>' : '';
@@ -713,27 +719,100 @@ function openBookingModal(date, sessionId) {
   
   document.getElementById('booking-time-string').innerHTML = `${dateStr} <br> ${sessName}`;
   
-  // Find which classes are already booked in this activity
-  const bookedClasses = {};
-  Object.values(act.slots).forEach(slot => {
-    if (slot.status === 'reserved' && slot.bookings) {
-      Object.keys(slot.bookings).forEach(c => {
-        bookedClasses[c] = true;
-      });
-    }
-  });
-
+  const typeGroup = document.getElementById('booking-type-group');
+  const typeSelect = document.getElementById('booking-type-select');
   const classSelect = document.getElementById('booking-class-select');
-  classSelect.innerHTML = '<option value="" disabled selected>-- 請選擇班級 --</option>';
-  
-  act.classes.forEach(cls => {
-    if (!bookedClasses[cls]) {
-      const opt = document.createElement('option');
-      opt.value = cls;
-      opt.textContent = `${cls} 班`;
-      classSelect.appendChild(opt);
-    }
-  });
+
+  if (act.bookingTypes && act.bookingTypes.length > 0) {
+    typeGroup.style.display = 'block';
+    typeSelect.setAttribute('required', 'true');
+    
+    // Track booked types for each class
+    const classBookedTypes = {};
+    Object.values(act.slots).forEach(slot => {
+      if (slot.status === 'reserved' && slot.bookings) {
+        Object.entries(slot.bookings).forEach(([c, b]) => {
+          classBookedTypes[c] = classBookedTypes[c] || [];
+          if (b.type) classBookedTypes[c].push(b.type);
+        });
+      }
+    });
+
+    // Populate class list: show classes that haven't booked all types
+    classSelect.innerHTML = '<option value="" disabled selected>-- 請選擇班級 --</option>';
+    act.classes.forEach(cls => {
+      const bookedList = classBookedTypes[cls] || [];
+      if (bookedList.length < act.bookingTypes.length) {
+        const opt = document.createElement('option');
+        opt.value = cls;
+        opt.textContent = `${cls} 班`;
+        classSelect.appendChild(opt);
+      }
+    });
+
+    // Function to update type dropdown based on selected class
+    const updateTypes = () => {
+      const selectedClass = classSelect.value;
+      if (!selectedClass) {
+        typeSelect.innerHTML = '<option value="" disabled selected>-- 請先選擇班級 --</option>';
+        return;
+      }
+
+      const slotKey = `${date}_${sessionId}`;
+      const slot = act.slots[slotKey];
+      const typesInSlot = slot && slot.bookings ? Object.values(slot.bookings).map(b => b.type).filter(Boolean) : [];
+      const typesByClass = classBookedTypes[selectedClass] || [];
+
+      // Allowed types = act.bookingTypes - typesInSlot - typesByClass
+      const allowedTypes = act.bookingTypes.filter(t => !typesInSlot.includes(t) && !typesByClass.includes(t));
+
+      typeSelect.innerHTML = '';
+      if (allowedTypes.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '此時段無您可登記的項目（或已被選完）';
+        opt.disabled = true;
+        opt.selected = true;
+        typeSelect.appendChild(opt);
+      } else {
+        allowedTypes.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = t;
+          typeSelect.appendChild(opt);
+        });
+      }
+    };
+
+    // Listen to selection change
+    classSelect.onchange = updateTypes;
+    updateTypes(); // initial call
+  } else {
+    // Standard mode (no bookingTypes)
+    typeGroup.style.display = 'none';
+    typeSelect.removeAttribute('required');
+    typeSelect.innerHTML = '';
+
+    const bookedClasses = {};
+    Object.values(act.slots).forEach(slot => {
+      if (slot.status === 'reserved' && slot.bookings) {
+        Object.keys(slot.bookings).forEach(c => {
+          bookedClasses[c] = true;
+        });
+      }
+    });
+
+    classSelect.innerHTML = '<option value="" disabled selected>-- 請選擇班級 --</option>';
+    act.classes.forEach(cls => {
+      if (!bookedClasses[cls]) {
+        const opt = document.createElement('option');
+        opt.value = cls;
+        opt.textContent = `${cls} 班`;
+        classSelect.appendChild(opt);
+      }
+    });
+    classSelect.onchange = null; // clear listener
+  }
 
   document.getElementById('booking-pin').value = '';
   
@@ -1013,6 +1092,7 @@ function setupEventListeners() {
       const sessionId = form.dataset.sessionId;
       const className = document.getElementById('booking-class-select').value;
       const pin = document.getElementById('booking-pin').value;
+      const bookingType = document.getElementById('booking-type-select').value || '';
       
       if (!date || !sessionId) {
         showToast('無法讀取時段資訊', 'error');
@@ -1042,7 +1122,7 @@ function setupEventListeners() {
         }
 
         // Add class booking
-        slotData.bookings[className] = { pin: pin };
+        slotData.bookings[className] = { pin: pin, type: bookingType };
         await slotRef.set(slotData);
 
         // Save local key for device lock
@@ -1064,7 +1144,7 @@ function setupEventListeners() {
           slotData.bookings = slotData.bookings || {};
         }
 
-        slotData.bookings[className] = { pin: pin };
+        slotData.bookings[className] = { pin: pin, type: bookingType };
         act.slots[slotKey] = slotData;
         saveLocalDb();
 
