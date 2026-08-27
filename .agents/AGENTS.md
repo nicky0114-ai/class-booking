@@ -12,3 +12,16 @@
    - 自動建立／更新 README.md：在「開發歷史／Changelog」自動追加當天工作成果與日期記錄。
    - 自動 Git Commit：自動執行 git add . 與 git commit -m "docs: 專案結束存檔，更新 README 說明文件"。
    - 回報存檔摘要：向使用者報告 Commit 狀態與更新內容。
+
+
+## 文件處理工具 (Core Document Processing Tools)
+
+專案中內建了 doc_tool.py，它集成了講義推薦的三個核心文件處理工具：
+1. **MarkItDown**：用於將 Word (.docx), Excel (.xlsx), PowerPoint (.pptx), PDF 轉換成 Markdown 文字。
+   - 執行指令：`python3 doc_tool.py md [輸入檔案] [輸出檔案]`
+2. **PyMuPDF**：用於精準提取 PDF 內部的文字、頁面資訊。
+   - 執行指令：`python3 doc_tool.py pdf [輸入檔案] [輸出檔案]`
+3. **PDF OCR (Tesseract)**：用於掃描型 PDF 或圖片的文字辨識（需要本機安裝 tesseract）。
+   - 執行指令：`python3 doc_tool.py ocr [輸入檔案] [輸出檔案]`
+
+當使用者要求讀取或整理 Word/Excel/PPT/PDF 檔案，或是要進行 OCR 辨識時，請優先調用該專案目錄下的 doc_tool.py 進行處理。

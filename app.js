@@ -1645,9 +1645,10 @@ function setupEventListeners() {
       { id: "2", name: "2", time: "09:35~10:15" },
       { id: "3", name: "3", time: "10:30~11:10" },
       { id: "4", name: "4", time: "11:20~12:00" },
-      { id: "lunch", name: "午休", time: "12:40~13:10", alwaysBlocked: true },
+      { id: "lunch", name: "午休", time: "12:00~13:20", alwaysBlocked: true },
       { id: "5", name: "5", time: "13:20~14:00" },
-      { id: "6", name: "6", time: "14:10~14:50" }
+      { id: "6", name: "6", time: "14:10~14:50" },
+      { id: "7", name: "7", time: "15:10~15:50" }
     ];
 
     const actData = {
@@ -1673,6 +1674,9 @@ function setupEventListeners() {
           if (listCopy[index].bookingTypes) {
             actData.bookingTypes = listCopy[index].bookingTypes;
           }
+          if (listCopy[index].sessions) {
+            actData.sessions = listCopy[index].sessions;
+          }
           listCopy[index] = actData;
         } else {
           listCopy.push(actData);
@@ -1693,6 +1697,9 @@ function setupEventListeners() {
         actData.slots = Object.assign(db.activities[index].slots || {}, state.tempAiSlots || {});
         if (db.activities[index].bookingTypes) {
           actData.bookingTypes = db.activities[index].bookingTypes;
+        }
+        if (db.activities[index].sessions) {
+          actData.sessions = db.activities[index].sessions;
         }
         db.activities[index] = actData;
       } else {
