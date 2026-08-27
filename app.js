@@ -1668,6 +1668,9 @@ function setupEventListeners() {
         
         if (index >= 0) {
           actData.slots = Object.assign(listCopy[index].slots || {}, state.tempAiSlots || {}); // preserve bookings and merge AI slots
+          if (listCopy[index].bookingTypes) {
+            actData.bookingTypes = listCopy[index].bookingTypes;
+          }
           listCopy[index] = actData;
         } else {
           listCopy.push(actData);
@@ -1686,6 +1689,9 @@ function setupEventListeners() {
       const index = db.activities.findIndex(a => a.id === actData.id);
       if (index >= 0) {
         actData.slots = Object.assign(db.activities[index].slots || {}, state.tempAiSlots || {});
+        if (db.activities[index].bookingTypes) {
+          actData.bookingTypes = db.activities[index].bookingTypes;
+        }
         db.activities[index] = actData;
       } else {
         db.activities.push(actData);
