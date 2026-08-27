@@ -1,0 +1,35 @@
+# Personal secrets & keys
+*credentials*
+*password*
+*token*
+*secret*
+*.key
+*.token
+.env
+
+# Temporary and Cache files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+.cache/
+
+# Python Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+
+# Node.js dependencies
+node_modules/
+
+# System hidden files
+.idea/
+.vscode/
+
+# Large temporary files/data
+*.log

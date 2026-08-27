@@ -1186,6 +1186,8 @@ function setupEventListeners() {
     
     document.getElementById('act-start-date').value = formatDateIso(today);
     document.getElementById('act-end-date').value = formatDateIso(future);
+    document.getElementById('act-open-start').value = '';
+    document.getElementById('act-open-end').value = '';
     document.getElementById('act-classes').value = '501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516';
     document.getElementById('act-capacity').value = 1;
     
